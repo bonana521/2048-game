@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏中心 - 2048 & 吃豆人</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            width: 100%;
+            padding: 0 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .game-card:hover .game-icon::before {
+            transform: translateX(100%);
+        }
+
+        .game-2048 .game-icon {
+            background: linear-gradient(135deg, #776e65, #8f7a66);
+        }
+
+        .game-pacman .game-icon {
+            background: linear-gradient(135deg, #ffeb3b, #ff9800);
+        }
+
+        .game-card h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .game-card p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .play-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .play-btn:active {
+            transform: translateY(0);
+        }
+
+        .game-2048 .play-btn {
+            background: linear-gradient(135deg, #776e65, #8f7a66);
+            box-shadow: 0 5px 15px rgba(119, 110, 101, 0.4);
+        }
+
+        .game-2048 .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(119, 110, 101, 0.6);
+        }
+
+        .game-pacman .play-btn {
+            background: linear-gradient(135deg, #ffeb3b, #ff9800);
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        .game-pacman .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.6);
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .feature-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .game-2048 .feature-tag {
+            background: rgba(119, 110, 101, 0.1);
+            color: #776e65;
+        }
+
+        .game-pacman .feature-tag {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            animation: fadeIn 2s ease-out;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .games-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 15px;
+            }
+
+            .game-card {
+                padding: 25px;
+            }
+
+            .game-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+
+            .game-card h2 {
+                font-size: 1.8rem;
+            }
+
+            .play-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .games-container {
+                padding: 0 10px;
+            }
+
+            .game-card {
+                padding: 20px;
+            }
+
+            .features {
+                gap: 10px;
+            }
+
+            .feature-tag {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+            }
+        }
+
+        /* 加载动画 */
+        .game-card {
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .game-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .game-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 游戏中心</h1>
+        <p>选择你喜欢的游戏，开始愉快的时间吧！</p>
+    </div>
+
+    <div class="games-container">
+        <div class="game-card game-2048">
+            <div class="game-icon">2048</div>
+            <h2>2048 数字游戏</h2>
+            <p>经典的数字合并游戏，通过滑动合并相同数字，最终达到2048！挑战你的逻辑思维和策略规划能力。</p>
+            <a href="2048.html" class="play-btn">开始游戏</a>
+            <div class="features">
+                <span class="feature-tag">🧠 策略游戏</span>
+                <span class="feature-tag">📱 触摸支持</span>
+                <span class="feature-tag">💾 本地高分</span>
+            </div>
+        </div>
+
+        <div class="game-card game-pacman">
+            <div class="game-icon">🟡</div>
+            <h2>吃豆人游戏</h2>
+            <p>经典的街机游戏！控制吃豆人在迷宫中收集豆子，躲避幽灵的追捕，体验怀旧的童年乐趣。</p>
+            <a href="pacman.html" class="play-btn">开始游戏</a>
+            <div class="features">
+                <span class="feature-tag">🎯 街机经典</span>
+                <span class="feature-tag">👻 幽灵AI</span>
+                <span class="feature-tag">⌨️ WASD支持</span>
+                <span class="feature-tag">⚡ 高刷新率</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🎲 更多精彩游戏敬请期待</p>
+        <div>
+            <a href="2048.html">2048游戏</a>
+            <a href="pacman.html">吃豆人游戏</a>
+        </div>
+    </div>
+
+    <script>
+        // 添加一些交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为游戏卡片添加点击音效模拟（视觉反馈）
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            gameCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是按钮，不处理卡片点击事件
+                    if (e.target.classList.contains('play-btn')) {
+                        return;
+                    }
+                    
+                    // 添加点击效果
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // 为按钮添加特殊效果
+            const playButtons = document.querySelectorAll('.play-btn');
+            playButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // 创建涟漪效果
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.5);
+                        top: ${y}px;
+                        left: ${x}px;
+                        pointer-events: none;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                    `;
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+
+        // 添加涟漪动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') {
+                window.location.href = '2048.html';
+            } else if (e.key === '2') {
+                window.location.href = 'pacman.html';
+            }
+        });
+    </script>
+</body>
+</html>

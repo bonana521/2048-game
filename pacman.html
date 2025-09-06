@@ -73,6 +73,51 @@
         .restart-btn:hover {
             background: #0052cc;
         }
+        
+        .game-start {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            display: block;
+        }
+        
+        .start-btn {
+            background: #00aa00;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .start-btn:hover {
+            background: #008800;
+        }
+        
+        .home-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .home-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a5a90);
+        }
     </style>
 </head>
 <body>
@@ -80,13 +125,21 @@
         <div class="game-info">
             <span class="score">得分: <span id="score">0</span></span>
             <span class="lives">生命: <span id="lives">3</span></span>
+            <span class="fps" style="color: #888; font-size: 14px; margin-left: 20px;">FPS: <span id="fps">0</span></span>
         </div>
         
         <canvas id="gameCanvas" width="600" height="600"></canvas>
         
         <div class="game-controls">
-            <p>使用方向键控制吃豆人移动</p>
+            <p>使用方向键或 WASD 控制吃豆人移动</p>
             <p>空格键：开始/暂停游戏</p>
+            <button class="home-btn" onclick="goHome()">返回主页</button>
+        </div>
+        
+        <div class="game-start" id="gameStart">
+            <h2>吃豆人游戏</h2>
+            <p>准备好开始游戏了吗？</p>
+            <button class="start-btn" onclick="startGame()">开始游戏</button>
         </div>
         
         <div class="game-over" id="gameOver">
@@ -103,6 +156,8 @@
         const livesElement = document.getElementById('lives');
         const gameOverElement = document.getElementById('gameOver');
         const finalScoreElement = document.getElementById('finalScore');
+        const gameStartElement = document.getElementById('gameStart');
+        const fpsElement = document.getElementById('fps');
 
         // 游戏配置
         const CELL_SIZE = 30;
@@ -112,10 +167,15 @@
         const GHOST_MOVE_INTERVAL = 200; // 毫秒
 
         // 游戏状态
-        let gameState = 'waiting'; // waiting, playing, paused, gameOver
+        let gameState = 'start'; // start, waiting, playing, paused, gameOver
         let score = 0;
         let lives = 3;
         let lastTime = 0;
+        
+        // FPS计算
+        let frameCount = 0;
+        let lastFpsUpdate = 0;
+        let currentFps = 0;
 
         // 游戏地图 (0: 墙, 1: 豆子, 2: 能量豆, 3: 空地)
         const gameMap = [
@@ -484,6 +544,13 @@
             }
         }
 
+        // 开始游戏
+        function startGame() {
+            gameStartElement.style.display = 'none';
+            gameState = 'playing';
+            initializeGame();
+        }
+
         // 游戏结束
         function gameOver(won = false) {
             gameState = 'gameOver';
@@ -491,9 +558,8 @@
             gameOverElement.style.display = 'block';
         }
 
-        // 重新开始游戏
-        function restartGame() {
-            gameState = 'playing';
+        // 初始化游戏
+        function initializeGame() {
             score = 0;
             lives = 3;
             pacman.x = 9;
@@ -523,8 +589,24 @@
             gameOverElement.style.display = 'none';
         }
 
+        // 重新开始游戏
+        function restartGame() {
+            gameOverElement.style.display = 'none';
+            gameState = 'playing';
+            initializeGame();
+        }
+
         // 游戏主循环
         function gameLoop(timestamp) {
+            // 计算FPS
+            frameCount++;
+            if (timestamp - lastFpsUpdate >= 1000) {
+                currentFps = Math.round(frameCount * 1000 / (timestamp - lastFpsUpdate));
+                fpsElement.textContent = currentFps;
+                frameCount = 0;
+                lastFpsUpdate = timestamp;
+            }
+            
             // 清空画布
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
@@ -546,6 +628,7 @@
         // 键盘控制
         document.addEventListener('keydown', (e) => {
             switch (e.key) {
+                // 方向键控制
                 case 'ArrowUp':
                     e.preventDefault();
                     pacman.nextDirection = 'up';
@@ -562,9 +645,35 @@
                     e.preventDefault();
                     pacman.nextDirection = 'right';
                     break;
+                
+                // WASD控制
+                case 'w':
+                case 'W':
+                    e.preventDefault();
+                    pacman.nextDirection = 'up';
+                    break;
+                case 's':
+                case 'S':
+                    e.preventDefault();
+                    pacman.nextDirection = 'down';
+                    break;
+                case 'a':
+                case 'A':
+                    e.preventDefault();
+                    pacman.nextDirection = 'left';
+                    break;
+                case 'd':
+                case 'D':
+                    e.preventDefault();
+                    pacman.nextDirection = 'right';
+                    break;
+                
+                // 空格键控制
                 case ' ':
                     e.preventDefault();
-                    if (gameState === 'waiting' || gameState === 'paused') {
+                    if (gameState === 'start') {
+                        startGame();
+                    } else if (gameState === 'waiting' || gameState === 'paused') {
                         gameState = 'playing';
                     } else if (gameState === 'playing') {
                         gameState = 'paused';
@@ -573,8 +682,13 @@
             }
         });
 
-        // 开始游戏
-        restartGame();
+        // 返回主页
+        function goHome() {
+            window.location.href = 'games_home.html';
+        }
+
+        // 初始化游戏（但不开始）
+        initializeGame();
         gameLoop();
     </script>
 </body>

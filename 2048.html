@@ -118,6 +118,30 @@
             background: #9f8a76;
         }
 
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .home-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .home-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a5a90);
+        }
+
         .game-over {
             position: absolute;
             top: 0;
@@ -190,7 +214,10 @@
         
         <div class="controls">
             <p>使用方向键或WASD控制</p>
-            <button class="new-game-btn" onclick="initGame()">新游戏</button>
+            <div class="button-group">
+                <button class="home-btn" onclick="goHome()">返回主页</button>
+                <button class="new-game-btn" onclick="initGame()">新游戏</button>
+            </div>
         </div>
     </div>
 
@@ -454,6 +481,11 @@
             touchStartX = 0;
             touchStartY = 0;
         });
+
+        // 返回主页
+        function goHome() {
+            window.location.href = 'games_home.html';
+        }
 
         // 初始化游戏
         initGame();
