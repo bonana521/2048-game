@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>刷新率测试</title>
+</head>
+<body>
+    <h1>刷新率测试页面</h2>
+    <div id="fps">FPS: 0</div>
+    <div id="refreshRate">检测到的刷新率: 0 Hz</div>
+    
+    <script>
+        let frameCount = 0;
+        let lastTime = performance.now();
+        let refreshRates = [];
+        
+        function updateFPS() {
+            frameCount++;
+            const currentTime = performance.now();
+            const deltaTime = currentTime - lastTime;
+            
+            if (deltaTime >= 1000) {
+                const fps = Math.round(frameCount * 1000 / deltaTime);
+                document.getElementById('fps').textContent = `FPS: ${fps}`;
+                
+                // 根据FPS估算刷新率
+                if (fps >= 140 && fps <= 150) {
+                    document.getElementById('refreshRate').textContent = '检测到的刷新率: 144 Hz';
+                } else if (fps >= 55 && fps <= 65) {
+                    document.getElementById('refreshRate').textContent = '检测到的刷新率: 60 Hz';
+                } else if (fps >= 115 && fps <= 125) {
+                    document.getElementById('refreshRate').textContent = '检测到的刷新率: 120 Hz';
+                } else if (fps >= 235 && fps <= 245) {
+                    document.getElementById('refreshRate').textContent = '检测到的刷新率: 240 Hz';
+                } else {
+                    document.getElementById('refreshRate').textContent = `检测到的刷新率: 未知 (${fps} FPS)`;
+                }
+                
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+            
+            requestAnimationFrame(updateFPS);
+        }
+        
+        updateFPS();
+    </script>
+</body>
+</html>

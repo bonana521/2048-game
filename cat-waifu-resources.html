@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猫咪看板娘图片资源</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .image-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .image-card img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff6b9d;
+            margin-bottom: 15px;
+        }
+        
+        .image-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .image-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .copy-btn {
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: #ff5a8a;
+        }
+        
+        .usage-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .usage-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background: #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        
+        .resource-links {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .resource-links h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .resource-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .resource-links li {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .resource-links a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .resource-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐱 猫咪看板娘图片资源</h1>
+        
+        <div class="image-gallery">
+            <div class="image-card">
+                <img src="https://cdn.pixabay.com/photo/2016/03/28/12/35/cat-1285634_1280.png" alt="开心猫咪">
+                <h3>开心猫咪</h3>
+                <p>这只猫咪看起来很开心，适合作为默认表情</p>
+                <button class="copy-btn" onclick="copyImageUrl(this)">复制链接</button>
+            </div>
+            
+            <div class="image-card">
+                <img src="https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2930400_1280.png" alt="兴奋猫咪">
+                <h3>兴奋猫咪</h3>
+                <p>活泼可爱的猫咪，适合游戏推荐时使用</p>
+                <button class="copy-btn" onclick="copyImageUrl(this)">复制链接</button>
+            </div>
+            
+            <div class="image-card">
+                <img src="https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492_1280.jpg" alt="睡觉猫咪">
+                <h3>睡觉猫咪</h3>
+                <p>安静睡觉的猫咪，适合夜间模式</p>
+                <button class="copy-btn" onclick="copyImageUrl(this)">复制链接</button>
+            </div>
+            
+            <div class="image-card">
+                <img src="https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_1280.jpg" alt="酷酷猫咪">
+                <h3>酷酷猫咪</h3>
+                <p>帅气的猫咪，适合成就展示时使用</p>
+                <button class="copy-btn" onclick="copyImageUrl(this)">复制链接</button>
+            </div>
+            
+            <div class="image-card">
+                <img src="https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2930401_1280.png" alt="爱心猫咪">
+                <h3>爱心猫咪</h3>
+                <p>充满爱心的猫咪，适合鼓励玩家</p>
+                <button class="copy-btn" onclick="copyImageUrl(this)">复制链接</button>
+            </div>
+            
+            <div class="image-card">
+                <img src="https://cdn.pixabay.com/photo/2015/11/16/14/43/cat-1045782_1280.jpg" alt="思考猫咪">
+                <h3>思考猫咪</h3>
+                <p>正在思考的猫咪，适合游戏提示</p>
+                <button class="copy-btn" onclick="copyImageUrl(this)">复制链接</button>
+            </div>
+        </div>
+        
+        <div class="usage-section">
+            <h2>📝 使用方法</h2>
+            <p>您可以使用以下代码来替换看板娘的图片：</p>
+            
+            <div class="code-block">
+// 方法1：直接在HTML中替换
+&lt;img src="猫咪图片链接" alt="喵酱"&gt;
+
+// 方法2：在JavaScript中动态替换
+const img = document.querySelector('.waifu-image');
+img.src = "猫咪图片链接";
+
+// 方法3：使用nyan-chan-image.js
+const nyanChan = new NyanChanImage();
+            </div>
+            
+            <h3>😺 表情对应建议</h3>
+            <ul>
+                <li><strong>开心</strong>：日常状态，游戏开始时</li>
+                <li><strong>兴奋</strong>：游戏推荐，成就达成</li>
+                <li><strong>睡觉</strong>：夜间模式，长时间不操作</li>
+                <li><strong>酷酷</strong>：展示高分，游戏技巧</li>
+                <li><strong>爱心</strong>：鼓励玩家，温馨提醒</li>
+                <li><strong>思考</strong>：游戏提示，策略建议</li>
+            </ul>
+        </div>
+        
+        <div class="resource-links">
+            <h3>🔗 更多无版权猫咪图片资源</h3>
+            <ul>
+                <li>
+                    <strong>Pixabay</strong> - 高质量免费图片
+                    <br>
+                    <a href="https://pixabay.com/images/search/cat/" target="_blank">https://pixabay.com/images/search/cat/</a>
+                </li>
+                <li>
+                    <strong>Unsplash</strong> - 艺术风格照片
+                    <br>
+                    <a href="https://unsplash.com/s/photos/cat" target="_blank">https://unsplash.com/s/photos/cat</a>
+                </li>
+                <li>
+                    <strong>Pexels</strong> - 免费素材库
+                    <br>
+                    <a href="https://www.pexels.com/search/cat/" target="_blank">https://www.pexels.com/search/cat/</a>
+                </li>
+                <li>
+                    <strong>OpenClipart</strong> - 矢量插图
+                    <br>
+                    <a href="https://openclipart.org/search/?query=cat" target="_blank">https://openclipart.org/search/?query=cat</a>
+                </li>
+            </ul>
+            
+            <h3>🎨 AI生成猫咪图片</h3>
+            <ul>
+                <li>
+                    <strong>DALL-E 3</strong> - OpenAI的图像生成器
+                    <br>
+                    提示词："cute cartoon cat waifu, kawaii style, transparent background"
+                </li>
+                <li>
+                    <strong>Midjourney</strong> - 高质量AI图像
+                    <br>
+                    提示词："cute chibi cat girl, anime style, kawaii, pastel colors"
+                </li>
+                <li>
+                    <strong>Stable Diffusion</strong> - 开源AI图像生成
+                    <br>
+                    提示词："kawaii cat waifu, moe, anime style, high quality"
+                </li>
+            </ul>
+        </div>
+        
+        <div class="usage-section">
+            <h2>🎮 集成到游戏</h2>
+            <p>要将图片版看板娘集成到您的游戏中，请按以下步骤操作：</p>
+            
+            <div class="code-block">
+// 1. 替换原有的看板娘脚本
+// 将原来的：
+&lt;script src="nyan-chan.js"&gt;&lt;/script&gt;
+
+// 替换为：
+&lt;script src="nyan-chan-image.js"&gt;&lt;/script&gt;
+
+// 2. 可以根据需要修改图片链接
+// 在 nyan-chan-image.js 中修改 this.catImages.expressions 对象
+            </div>
+            
+            <h3>🐱 自定义建议</h3>
+            <ul>
+                <li>选择圆形头像的猫咪图片，效果更好</li>
+                <li>确保背景简洁或透明，便于融入界面</li>
+                <li>选择表情丰富的猫咪，增强交互体验</li>
+                <li>可以准备多张图片，对应不同表情</li>
+                <li>图片尺寸建议为200x200像素或更大</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        function copyImageUrl(button) {
+            const card = button.closest('.image-card');
+            const img = card.querySelector('img');
+            const url = img.src;
+            
+            // 创建临时输入框
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            // 更新按钮文本
+            const originalText = button.textContent;
+            button.textContent = '已复制！';
+            button.style.background = '#4caf50';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '#ff6b9d';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

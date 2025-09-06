@@ -186,6 +186,60 @@
                 font-size: 18px;
             }
         }
+        
+        /* 夜间模式样式 */
+        .night-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        
+        .night-mode .game-container {
+            background: rgba(30, 30, 30, 0.95);
+            color: #e0e0e0;
+        }
+        
+        .night-mode h1 {
+            color: #ffd700;
+        }
+        
+        .night-mode .score-box {
+            background: #444;
+            color: #fff;
+        }
+        
+        .night-mode .controls p {
+            color: #b0b0b0;
+        }
+        
+        .night-mode .grid-cell {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .night-mode .tile-2 { background: #eee4da; color: #776e65; }
+        .night-mode .tile-4 { background: #ede0c8; color: #776e65; }
+        .night-mode .tile-8 { background: #f2b179; color: #f9f6f2; }
+        .night-mode .tile-16 { background: #f59563; color: #f9f6f2; }
+        .night-mode .tile-32 { background: #f67c5f; color: #f9f6f2; }
+        .night-mode .tile-64 { background: #f65e3b; color: #f9f6f2; }
+        .night-mode .tile-128 { background: #edcf72; color: #f9f6f2; }
+        .night-mode .tile-256 { background: #edcc61; color: #f9f6f2; }
+        .night-mode .tile-512 { background: #edc850; color: #f9f6f2; }
+        .night-mode .tile-1024 { background: #edc53f; color: #f9f6f2; }
+        .night-mode .tile-2048 { background: #edc22e; color: #f9f6f2; }
+        
+        .night-mode .game-over {
+            background: rgba(30, 30, 30, 0.95);
+            color: #ffd700;
+        }
+        
+        .night-mode .new-game-btn {
+            background: linear-gradient(135deg, #ffd700, #ffb700);
+            color: #1a1a2e;
+        }
+        
+        .night-mode .home-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
     </style>
 </head>
 <body>
@@ -490,5 +544,8 @@
         // 初始化游戏
         initGame();
     </script>
+    
+    <!-- 喵酱图片版看板娘 -->
+    <script src="nyan-chan-image.js"></script>
 </body>
 </html>

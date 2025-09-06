@@ -358,6 +358,75 @@
             }
         }
 
+        /* 夜间模式样式 */
+        .night-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+        }
+
+        .night-mode .header h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .night-mode .header p {
+            color: #b0b0b0;
+        }
+
+        .night-mode .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e0e0e0;
+        }
+
+        .night-mode .game-card h2 {
+            color: #ffd700;
+        }
+
+        .night-mode .game-card p {
+            color: #b0b0b0;
+        }
+
+        .night-mode .play-btn {
+            background: linear-gradient(135deg, #ffd700, #ffb700);
+            color: #1a1a2e;
+        }
+
+        .night-mode .home-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+
+        .night-mode .feature-tag {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+
+        /* 夜间模式游戏卡片特殊样式 */
+        .night-mode .game-2048 .play-btn {
+            background: linear-gradient(135deg, #776e65, #8f7a66);
+            color: white;
+        }
+
+        .night-mode .game-pacman .play-btn {
+            background: linear-gradient(135deg, #ffeb3b, #ff9800);
+            color: #1a1a2e;
+        }
+
+        .night-mode .game-life .play-btn {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #1a1a2e;
+        }
+
+        .night-mode .game-ecosystem .play-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .night-mode .game-snake .play-btn {
+            background: linear-gradient(135deg, #00c851, #00ff00);
+            color: #1a1a2e;
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -557,9 +626,7 @@
         });
     </script>
     
-    <!-- Live2D 看板娘 -->
-    <script src="live2d-widget.js"></script>
-    <!-- 备用简化版看板娘 -->
-    <script src="simple-waifu.js"></script>
+    <!-- 喵酱图片版看板娘 -->
+    <script src="nyan-chan-image.js"></script>
 </body>
 </html>
