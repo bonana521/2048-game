@@ -31,7 +31,7 @@
 
 ### 在线游玩
 访问GitHub Pages网站直接在线游玩：
-**https://bonana521.github.io**
+**https://bonana521.github.io/2048-game/games_home.html**
 
 ### 本地运行
 
@@ -121,7 +121,7 @@
 ### GitHub Pages
 项目已配置GitHub Pages，可以通过以下地址访问：
 ```
-https://bonana521.github.io
+https://bonana521.github.io/2048-game
 ```
 
 ### 本地服务器
