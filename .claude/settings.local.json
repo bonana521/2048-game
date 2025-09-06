@@ -25,7 +25,9 @@
       "WebFetch(domain:github.com)",
       "WebSearch",
       "Bash(ping:*)",
-      "Bash(nslookup:*)"
+      "Bash(nslookup:*)",
+      "WebFetch(domain:bonana521.github.io)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": [],
     "ask": []
