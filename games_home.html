@@ -108,6 +108,10 @@
             background: linear-gradient(135deg, #ffeb3b, #ff9800);
         }
 
+        .game-life .game-icon {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+        }
+
         .game-card h2 {
             font-size: 2rem;
             margin-bottom: 15px;
@@ -164,6 +168,15 @@
             box-shadow: 0 8px 25px rgba(255, 152, 0, 0.6);
         }
 
+        .game-life .play-btn {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .game-life .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.6);
+        }
+
         .features {
             display: flex;
             justify-content: center;
@@ -189,6 +202,11 @@
         .game-pacman .feature-tag {
             background: rgba(255, 152, 0, 0.1);
             color: #ff9800;
+        }
+
+        .game-life .feature-tag {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
         }
 
         .footer {
@@ -318,6 +336,10 @@
             animation-delay: 0.4s;
         }
 
+        .game-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
         @keyframes slideInUp {
             from {
                 opacity: 0;
@@ -361,6 +383,19 @@
                 <span class="feature-tag">⚡ 高刷新率</span>
             </div>
         </div>
+
+        <div class="game-card game-life">
+            <div class="game-icon">🧬</div>
+            <h2>康威生命游戏</h2>
+            <p>经典的细胞自动机游戏！观察细胞按照简单规则演化，创造出复杂的生命模式，探索数学之美的奇妙世界。</p>
+            <a href="gameoflife.html" class="play-btn">开始游戏</a>
+            <div class="features">
+                <span class="feature-tag">🧬 细胞自动机</span>
+                <span class="feature-tag">🎨 预设图案</span>
+                <span class="feature-tag">👆 触摸绘制</span>
+                <span class="feature-tag">📊 实时统计</span>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -368,6 +403,7 @@
         <div>
             <a href="2048.html">2048游戏</a>
             <a href="pacman.html">吃豆人游戏</a>
+            <a href="gameoflife.html">生命游戏</a>
         </div>
     </div>
 
@@ -445,6 +481,8 @@
                 window.location.href = '2048.html';
             } else if (e.key === '2') {
                 window.location.href = 'pacman.html';
+            } else if (e.key === '3') {
+                window.location.href = 'gameoflife.html';
             }
         });
     </script>
