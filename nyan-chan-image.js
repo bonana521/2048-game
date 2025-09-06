@@ -497,7 +497,7 @@ class NyanChanImage {
         const greetings = this.dailyDialogues.greetings[timeOfDay];
         const message = greetings[Math.floor(Math.random() * greetings.length)];
         
-        this.showMessage(message, 4000);
+        this.showMessage(message); // 持续显示欢迎消息
     }
     
     showGameWelcome() {
@@ -507,24 +507,33 @@ class NyanChanImage {
         const message = dialogues[Math.floor(Math.random() * dialogues.length)];
         
         setTimeout(() => {
-            this.showMessage(message, 5000);
+            this.showMessage(message); // 游戏欢迎消息持续显示
         }, 1000);
     }
     
-    showMessage(text, duration = 3000) {
+    showMessage(text, duration = 0) {
         const messageEl = document.querySelector("#nyan-chan-image .message-text");
         if (!messageEl) return;
+        
+        // 清除之前的隐藏定时器
+        if (this.messageTimer) {
+            clearTimeout(this.messageTimer);
+            this.messageTimer = null;
+        }
         
         messageEl.textContent = text;
         messageEl.style.opacity = "1";
         
-        setTimeout(() => {
-            messageEl.style.opacity = "0";
-            setTimeout(() => {
-                messageEl.textContent = "";
-                messageEl.style.opacity = "1";
-            }, 500);
-        }, duration);
+        // 只有在指定了duration时才会自动消失
+        if (duration > 0) {
+            this.messageTimer = setTimeout(() => {
+                messageEl.style.opacity = "0";
+                setTimeout(() => {
+                    messageEl.textContent = "";
+                    messageEl.style.opacity = "1";
+                }, 500);
+            }, duration);
+        }
     }
     
     changeOutfit() {
@@ -543,13 +552,13 @@ class NyanChanImage {
             }, 10);
         }
         
-        this.showMessage("喵~ 我换了新造型呢！可爱吗？", 2000);
+        this.showMessage("喵~ 我换了新造型呢！可爱吗？");
     }
     
     startConversation() {
         const interactions = this.dailyDialogues.interactions;
         const message = interactions[Math.floor(Math.random() * interactions.length)];
-        this.showMessage(message, 4000);
+        this.showMessage(message); // 对话消息持续显示
     }
     
     recommendGame() {
@@ -568,7 +577,7 @@ class NyanChanImage {
         const dialogues = this.gameDialogues[game];
         const message = dialogues[Math.floor(Math.random() * dialogues.length)];
         
-        this.showMessage(`我推荐你玩${game}！${message}`, 5000);
+        this.showMessage(`我推荐你玩${game}！${message}`); // 游戏推荐消息持续显示
     }
     
     toggleNightMode() {
@@ -576,7 +585,7 @@ class NyanChanImage {
         document.body.classList.toggle('night-mode');
         
         const message = this.isNightMode ? "夜晚模式开启喵~ 保护眼睛很重要呢！" : "白天模式恢复喵~ 继续享受游戏吧！";
-        this.showMessage(message, 3000);
+        this.showMessage(message); // 模式切换消息持续显示
     }
     
     toggleMusic() {
@@ -585,13 +594,13 @@ class NyanChanImage {
                 this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
             }
             this.musicPlaying = false;
-            this.showMessage("音乐暂停了喵~ 需要的时候再打开哦！", 2000);
+            this.showMessage("音乐暂停了喵~ 需要的时候再打开哦！"); // 音乐状态消息持续显示
         } else {
             if (this.oscillator) {
                 this.gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
             }
             this.musicPlaying = true;
-            this.showMessage("开始播放背景音乐喵~ 享受游戏时光吧！", 2000);
+            this.showMessage("开始播放背景音乐喵~ 享受游戏时光吧！"); // 音乐状态消息持续显示
         }
     }
     
@@ -603,7 +612,7 @@ class NyanChanImage {
         const waifu = document.getElementById("nyan-chan-image");
         if (waifu) {
             waifu.style.display = "none";
-            this.showMessage("下次再见喵~ 我会想你的！", 2000);
+            this.showMessage("下次再见喵~ 我会想你的！", 2000); // 隐藏消息仍然短暂显示
         }
     }
     
@@ -650,7 +659,7 @@ class NyanChanImage {
         const inactiveTime = Date.now() - this.lastInteraction;
         
         if (inactiveTime > 300000) { // 5分钟无操作
-            this.showMessage("喵~ 还在吗？需要我推荐游戏吗？", 4000);
+            this.showMessage("喵~ 还在吗？需要我推荐游戏吗？"); // 用户状态提醒消息持续显示
             this.lastInteraction = Date.now();
         }
     }
@@ -667,7 +676,7 @@ class NyanChanImage {
             
             if (Math.random() < 0.3) { // 30% 概率
                 const message = messages[Math.floor(Math.random() * messages.length)];
-                this.showMessage(message, 3000);
+                this.showMessage(message, 5000); // 闲置动画消息显示5秒
             }
         }, 30000); // 每30秒
     }

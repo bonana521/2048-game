@@ -401,7 +401,7 @@
                 </div>
 
                 <div class="info-panel">
-                    <h3>🔬 模拟规则</h3>
+                    <h3>🔬 优化后的模拟规则</h3>
                     <p><strong>植物规则:</strong></p>
                     <ul style="margin-left: 15px; margin-bottom: 10px;">
                         <li>孤独死亡：邻居少于2个</li>
@@ -409,20 +409,21 @@
                         <li>过度拥挤：多于3个邻居</li>
                         <li>繁殖：恰好3个邻居</li>
                     </ul>
-                    <p><strong>草食动物规则:</strong></p>
+                    <p><strong>草食动物规则 (优化版):</strong></p>
                     <ul style="margin-left: 15px; margin-bottom: 10px;">
-                        <li>需要植物邻居生存</li>
-                        <li>食物不足时死亡</li>
-                        <li>有食物时可以繁殖</li>
-                        <li>避免肉食动物邻居</li>
+                        <li>需要植物邻居，但有能量储备时可生存</li>
+                        <li>降低能量消耗，更容易维持生存</li>
+                        <li>降低繁殖门槛，允许在天敌存在时繁殖</li>
+                        <li>放宽竞争限制，增加生存机会</li>
                     </ul>
-                    <p><strong>肉食动物规则:</strong></p>
+                    <p><strong>肉食动物规则 (优化版):</strong></p>
                     <ul style="margin-left: 15px; margin-bottom: 10px;">
-                        <li>需要草食动物邻居生存</li>
-                        <li>猎物不足时死亡</li>
-                        <li>有猎物时可以繁殖</li>
-                        <li>避免过度竞争</li>
+                        <li>需要草食动物，但有能量储备时可生存</li>
+                        <li>降低能量消耗，更容易维持生存</li>
+                        <li>降低繁殖门槛，更容易繁殖后代</li>
+                        <li>放宽竞争限制，增加生存机会</li>
                     </ul>
+                    <p><strong>🎯 优化目标:</strong> 建立可持续的生态平衡圈</p>
                     <p><strong>操作:</strong> 点击画布绘制生物</p>
                 </div>
             </div>
@@ -455,16 +456,16 @@
                 this.populationHistory = [];
                 this.maxHistoryLength = 100;
                 
-                // 生态参数 - 三级生态系统优化设置
+                // 生态参数 - 优化为可持续生态圈
                 this.plantReproductionThreshold = 3;
                 this.herbivoreFoodRequirement = 1;
                 this.herbivoreReproductionThreshold = 2;
-                this.herbivoreEatChance = 0.12; // 降低捕食概率
-                this.herbivoreBirthChance = 0.18; // 降低繁殖概率
+                this.herbivoreEatChance = 0.08; // 大幅降低捕食概率，保护植物
+                this.herbivoreBirthChance = 0.25; // 提高草食动物繁殖概率
                 this.carnivoreFoodRequirement = 1;
                 this.carnivoreReproductionThreshold = 2;
-                this.carnivoreHuntChance = 0.10; // 肉食动物捕食概率
-                this.carnivoreBirthChance = 0.12; // 肉食动物繁殖概率
+                this.carnivoreHuntChance = 0.06; // 大幅降低捕食概率，保护草食动物
+                this.carnivoreBirthChance = 0.15; // 适度提高肉食动物繁殖概率
                 
                 this.initializeEventListeners();
                 this.updateStatistics();
@@ -613,34 +614,51 @@
                 const herbivoreNeighbors = neighbors.filter(n => n.type === 'herbivore').length;
                 const carnivoreNeighbors = neighbors.filter(n => n.type === 'carnivore').length;
                 
-                // 草食动物生存逻辑
+                // 草食动物生存逻辑 - 优化为更容易生存
                 if (plantNeighbors < this.herbivoreFoodRequirement) {
-                    // 食物不足，饥饿死亡
-                    newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
-                } else if (herbivoreNeighbors > 3) {
-                    // 过度竞争死亡
+                    // 食物不足，饥饿死亡 - 但给一些生存机会
+                    if (cell.energy > 2 && Math.random() < 0.3) {
+                        // 有能量储备，有一定机会生存
+                        newGrid[y][x] = { 
+                            type: 'herbivore', 
+                            age: cell.age + 1, 
+                            energy: Math.max(0, cell.energy - 1.5) 
+                        };
+                    } else {
+                        newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
+                    }
+                } else if (herbivoreNeighbors > 4) {
+                    // 放宽竞争限制
                     newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
                 } else if (carnivoreNeighbors > 0 && Math.random() < this.carnivoreHuntChance) {
                     // 被肉食动物捕食
                     newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
                 } else {
                     // 有食物，可以生存
-                    const newEnergy = Math.min(8, cell.energy + plantNeighbors * 0.5);
+                    const newEnergy = Math.min(8, cell.energy + plantNeighbors * 0.6);
                     
-                    if (newEnergy > 6 && herbivoreNeighbors <= 2 && carnivoreNeighbors === 0) {
-                        // 能量充足且竞争不激烈且没有天敌，可以繁殖
-                        this.reproduceHerbivore(x, y, neighbors, newGrid);
-                        newGrid[y][x] = { 
-                            type: 'herbivore', 
-                            age: cell.age + 1, 
-                            energy: newEnergy / 2 
-                        };
+                    if (newEnergy > 5 && herbivoreNeighbors <= 3) {
+                        // 降低繁殖门槛，允许有天敌时也有繁殖机会
+                        if (carnivoreNeighbors === 0 || Math.random() < 0.3) {
+                            this.reproduceHerbivore(x, y, neighbors, newGrid);
+                            newGrid[y][x] = { 
+                                type: 'herbivore', 
+                                age: cell.age + 1, 
+                                energy: newEnergy / 2 
+                            };
+                        } else {
+                            newGrid[y][x] = { 
+                                type: 'herbivore', 
+                                age: cell.age + 1, 
+                                energy: newEnergy - 0.8 
+                            };
+                        }
                     } else {
-                        // 正常生存
+                        // 正常生存，降低能量消耗
                         newGrid[y][x] = { 
                             type: 'herbivore', 
                             age: cell.age + 1, 
-                            energy: newEnergy - 1 
+                            energy: newEnergy - 0.5 
                         };
                     }
                 }
@@ -650,19 +668,28 @@
                 const herbivoreNeighbors = neighbors.filter(n => n.type === 'herbivore').length;
                 const carnivoreNeighbors = neighbors.filter(n => n.type === 'carnivore').length;
                 
-                // 肉食动物生存逻辑
+                // 肉食动物生存逻辑 - 优化为更容易生存
                 if (herbivoreNeighbors < this.carnivoreFoodRequirement) {
-                    // 猎物不足，饥饿死亡
-                    newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
-                } else if (carnivoreNeighbors > 2) {
-                    // 过度竞争死亡
+                    // 猎物不足，饥饿死亡 - 但给一些生存机会
+                    if (cell.energy > 3 && Math.random() < 0.4) {
+                        // 有能量储备，有一定机会生存
+                        newGrid[y][x] = { 
+                            type: 'carnivore', 
+                            age: cell.age + 1, 
+                            energy: Math.max(0, cell.energy - 2) 
+                        };
+                    } else {
+                        newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
+                    }
+                } else if (carnivoreNeighbors > 3) {
+                    // 放宽竞争限制
                     newGrid[y][x] = { type: 'empty', age: 0, energy: 0 };
                 } else {
                     // 有猎物，可以生存
-                    const newEnergy = Math.min(10, cell.energy + herbivoreNeighbors * 0.8);
+                    const newEnergy = Math.min(10, cell.energy + herbivoreNeighbors * 1.0);
                     
-                    if (newEnergy > 7 && carnivoreNeighbors <= 1) {
-                        // 能量充足且竞争不激烈，可以繁殖
+                    if (newEnergy > 6 && carnivoreNeighbors <= 2) {
+                        // 降低繁殖门槛
                         this.reproduceCarnivore(x, y, neighbors, newGrid);
                         newGrid[y][x] = { 
                             type: 'carnivore', 
@@ -670,11 +697,11 @@
                             energy: newEnergy / 2 
                         };
                     } else {
-                        // 正常生存
+                        // 正常生存，降低能量消耗
                         newGrid[y][x] = { 
                             type: 'carnivore', 
                             age: cell.age + 1, 
-                            energy: newEnergy - 1.5 
+                            energy: newEnergy - 1.0 
                         };
                     }
                 }
@@ -685,17 +712,17 @@
                 const herbivoreNeighbors = neighbors.filter(n => n.type === 'herbivore').length;
                 const carnivoreNeighbors = neighbors.filter(n => n.type === 'carnivore').length;
                 
-                // 空细胞可以诞生新生命
+                // 空细胞可以诞生新生命 - 优化诞生条件
                 if (plantNeighbors === 3) {
                     // 植物繁殖
                     newGrid[y][x] = { type: 'plant', age: 0, energy: 2 };
-                } else if (plantNeighbors >= 2 && herbivoreNeighbors === 1 && carnivoreNeighbors === 0) {
-                    // 草食动物繁殖（需要充足植物且没有天敌）
+                } else if (plantNeighbors >= 2 && herbivoreNeighbors <= 2 && carnivoreNeighbors === 0) {
+                    // 草食动物繁殖（放宽条件）
                     if (Math.random() < this.herbivoreBirthChance) {
                         newGrid[y][x] = { type: 'herbivore', age: 0, energy: 3 };
                     }
-                } else if (herbivoreNeighbors >= 2 && carnivoreNeighbors === 1) {
-                    // 肉食动物繁殖（需要充足猎物）
+                } else if (herbivoreNeighbors >= 1 && carnivoreNeighbors <= 2) {
+                    // 肉食动物繁殖（放宽条件）
                     if (Math.random() < this.carnivoreBirthChance) {
                         newGrid[y][x] = { type: 'carnivore', age: 0, energy: 4 };
                     }
@@ -948,15 +975,15 @@
             randomize() {
                 this.reset();
                 
-                // 随机分布植物、草食动物和肉食动物
+                // 随机分布植物、草食动物和肉食动物 - 优化比例
                 for (let y = 0; y < this.rows; y++) {
                     for (let x = 0; x < this.cols; x++) {
                         const rand = Math.random();
-                        if (rand < 0.15) {
+                        if (rand < 0.20) { // 增加植物比例
                             this.grid[y][x] = { type: 'plant', age: 0, energy: 2 + Math.random() * 2 };
-                        } else if (rand < 0.18) {
+                        } else if (rand < 0.25) { // 增加草食动物比例
                             this.grid[y][x] = { type: 'herbivore', age: 0, energy: 3 + Math.random() * 2 };
-                        } else if (rand < 0.19) {
+                        } else if (rand < 0.27) { // 适度增加肉食动物比例
                             this.grid[y][x] = { type: 'carnivore', age: 0, energy: 4 + Math.random() * 2 };
                         }
                     }
