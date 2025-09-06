@@ -575,27 +575,41 @@
 
         // 改变方向
         function changeDirection(newDirection) {
-            if (gameState !== 'playing') return;
+            // 允许在游戏开始前设置方向
+            if (gameState !== 'playing' && gameState !== 'menu') return;
             
             switch (newDirection) {
                 case 'up':
                     if (direction.y === 0) {
                         direction = { x: 0, y: -1 };
+                        // 如果游戏还没开始，自动开始
+                        if (gameState === 'menu') {
+                            startGame();
+                        }
                     }
                     break;
                 case 'down':
                     if (direction.y === 0) {
                         direction = { x: 0, y: 1 };
+                        if (gameState === 'menu') {
+                            startGame();
+                        }
                     }
                     break;
                 case 'left':
                     if (direction.x === 0) {
                         direction = { x: -1, y: 0 };
+                        if (gameState === 'menu') {
+                            startGame();
+                        }
                     }
                     break;
                 case 'right':
                     if (direction.x === 0) {
                         direction = { x: 1, y: 0 };
+                        if (gameState === 'menu') {
+                            startGame();
+                        }
                     }
                     break;
             }
