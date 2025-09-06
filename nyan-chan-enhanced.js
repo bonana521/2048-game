@@ -15,23 +15,23 @@ class NyanChanEnhanced {
         
         // 本地猫咪图片资源
         this.catImages = {
-            // 使用本地猫咪图片
-            sources: ["b8f00a6954de3a65eb906f57c1ec36a4.jpg"],
+            // 使用本地AAA猫咪图片
+            sources: ["AAA.jpg"],
             
             // 不同表情的猫咪图片（使用同一张本地图片）
             expressions: {
-                happy: "b8f00a6954de3a65eb906f57c1ec36a4.jpg",
-                excited: "b8f00a6954de3a65eb906f57c1ec36a4.jpg",
-                sleeping: "b8f00a6954de3a65eb906f57c1ec36a4.jpg",
-                cool: "b8f00a6954de3a65eb906f57c1ec36a4.jpg",
-                love: "b8f00a6954de3a65eb906f57c1ec36a4.jpg"
+                happy: "AAA.jpg",
+                excited: "AAA.jpg",
+                sleeping: "AAA.jpg",
+                cool: "AAA.jpg",
+                love: "AAA.jpg"
             },
             
             // 动态效果（使用同一张本地图片）
             animated: {
-                waving: "b8f00a6954de3a65eb906f57c1ec36a4.jpg",
-                dancing: "b8f00a6954de3a65eb906f57c1ec36a4.jpg",
-                sleeping: "b8f00a6954de3a65eb906f57c1ec36a4.jpg"
+                waving: "AAA.jpg",
+                dancing: "AAA.jpg",
+                sleeping: "AAA.jpg"
             }
         };
         
