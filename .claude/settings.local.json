@@ -23,7 +23,9 @@
       "Bash(git fetch:*)",
       "Bash(git rm:*)",
       "WebFetch(domain:github.com)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(ping:*)",
+      "Bash(nslookup:*)"
     ],
     "deny": [],
     "ask": []
