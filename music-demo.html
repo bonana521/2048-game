@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8bit音乐演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .music-player {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .track-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .track-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .track-card.playing {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        .track-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .play-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .play-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .volume-control {
+            margin: 20px 0;
+        }
+        
+        .volume-slider {
+            width: 200px;
+            margin: 0 10px;
+        }
+        
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-panel h3 {
+            color: #ffd700;
+            margin-top: 0;
+        }
+        
+        .status {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            min-height: 30px;
+        }
+        
+        .playing-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 8bit音乐演示</h1>
+        
+        <div class="status" id="status">选择一首音乐开始播放</div>
+        
+        <div class="music-player">
+            <div class="track-card" data-track="happy">
+                <div class="track-title">🎶 快乐8bit</div>
+                <div>明亮的C大调旋律</div>
+                <button class="play-btn" onclick="playTrack('happy')">播放</button>
+                <button class="play-btn" onclick="stopTrack('happy')">停止</button>
+            </div>
+            
+            <div class="track-card" data-track="peaceful">
+                <div class="track-title">🎵 宁静8bit</div>
+                <div>舒缓的旋律</div>
+                <button class="play-btn" onclick="playTrack('peaceful')">播放</button>
+                <button class="play-btn" onclick="stopTrack('peaceful')">停止</button>
+            </div>
+            
+            <div class="track-card" data-track="energetic">
+                <div class="track-title">🎼 活力8bit</div>
+                <div>快节奏的旋律</div>
+                <button class="play-btn" onclick="playTrack('energetic')">播放</button>
+                <button class="play-btn" onclick="stopTrack('energetic')">停止</button>
+            </div>
+            
+            <div class="track-card" data-track="game">
+                <div class="track-title">🎹 游戏8bit</div>
+                <div>经典游戏风格</div>
+                <button class="play-btn" onclick="playTrack('game')">播放</button>
+                <button class="play-btn" onclick="stopTrack('game')">停止</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="volume-control">
+                <label>音量控制：</label>
+                <input type="range" class="volume-slider" id="volumeSlider" 
+                       min="0" max="1" step="0.1" value="0.1" 
+                       onchange="setVolume(this.value)">
+                <span id="volumeValue">10%</span>
+            </div>
+            
+            <button class="play-btn" onclick="stopAllTracks()">停止所有音乐</button>
+        </div>
+        
+        <div class="info-panel">
+            <h3>🔧 技术说明</h3>
+            <p><strong>格式：</strong>Web Audio API 实时合成</p>
+            <p><strong>音色：</strong>方波（Square Wave）- 经典8bit音色</p>
+            <p><strong>文件大小：</strong>0KB（代码生成，无需下载）</p>
+            <p><strong>版权：</strong>完全免费，无版权问题</p>
+            <p><strong>兼容性：</strong>支持所有现代浏览器</p>
+            <p><strong>特点：</strong>实时生成，跨平台，可自定义</p>
+            
+            <h3>🎮 用户体验</h3>
+            <p>✅ 所有访问者都能听到音乐</p>
+            <p>✅ 无需等待文件下载</p>
+            <p>✅ 支持移动设备</p>
+            <p>✅ 低延迟，高质量</p>
+            <p>✅ 可循环播放</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="games_home.html" class="back-btn">返回游戏主页</a>
+        </div>
+    </div>
+    
+    <!-- 8bit音乐库 -->
+    <script src="8bit-music.js"></script>
+    
+    <script>
+        let currentPlayingTrack = null;
+        
+        function updateStatus(message, isPlaying = false) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = message + (isPlaying ? '<span class="playing-indicator"></span>' : '');
+        }
+        
+        function updateTrackCards(playingTrack) {
+            document.querySelectorAll('.track-card').forEach(card => {
+                card.classList.remove('playing');
+            });
+            
+            if (playingTrack) {
+                const playingCard = document.querySelector(`[data-track="${playingTrack}"]`);
+                if (playingCard) {
+                    playingCard.classList.add('playing');
+                }
+            }
+        }
+        
+        async function playTrack(trackName) {
+            try {
+                updateStatus(`正在播放 ${bit8Music.tracks[trackName].name}...`, true);
+                updateTrackCards(trackName);
+                
+                if (currentPlayingTrack && currentPlayingTrack !== trackName) {
+                    bit8Music.stopTrack();
+                }
+                
+                currentPlayingTrack = trackName;
+                await bit8Music.playTrack(trackName, true);
+                
+            } catch (error) {
+                console.error('播放失败:', error);
+                updateStatus('播放失败，请检查浏览器音频权限');
+                updateTrackCards(null);
+            }
+        }
+        
+        function stopTrack(trackName) {
+            bit8Music.stopTrack();
+            if (currentPlayingTrack === trackName) {
+                currentPlayingTrack = null;
+                updateStatus('音乐已停止');
+                updateTrackCards(null);
+            }
+        }
+        
+        function stopAllTracks() {
+            bit8Music.stopTrack();
+            currentPlayingTrack = null;
+            updateStatus('所有音乐已停止');
+            updateTrackCards(null);
+        }
+        
+        function setVolume(value) {
+            bit8Music.setVolume(parseFloat(value));
+            document.getElementById('volumeValue').textContent = Math.round(value * 100) + '%';
+        }
+        
+        // 初始化音量显示
+        setVolume(0.1);
+        
+        // 页面加载完成后的提示
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                updateStatus('8bit音乐系统已就绪！点击播放按钮开始体验 🎵');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
