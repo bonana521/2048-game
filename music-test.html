@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8bit音乐测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+            text-align: center;
+        }
+        .test-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+        }
+        .test-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .test-btn:hover {
+            transform: scale(1.05);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 18px;
+        }
+        .track-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .track-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .track-item.playing {
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎵 8bit音乐系统测试</h1>
+        
+        <div class="status" id="status">正在初始化音乐系统...</div>
+        
+        <div>
+            <button class="test-btn" onclick="testAudioContext()">测试音频上下文</button>
+            <button class="test-btn" onclick="testAllTracks()">测试所有曲目</button>
+            <button class="test-btn" onclick="stopAllMusic()">停止所有音乐</button>
+        </div>
+        
+        <div class="track-list" id="trackList">
+            <!-- 曲目列表将在这里动态生成 -->
+        </div>
+        
+        <div>
+            <h3>调试信息</h3>
+            <div id="debugInfo" style="text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; font-family: monospace;">
+                等待测试...
+            </div>
+        </div>
+    </div>
+
+    <!-- 8bit音乐库 -->
+    <script src="8bit-music.js"></script>
+    
+    <script>
+        let debugLog = [];
+        
+        function log(message) {
+            debugLog.push(new Date().toLocaleTimeString() + ': ' + message);
+            document.getElementById('debugInfo').textContent = debugLog.join('\n');
+            console.log(message);
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+            log(message);
+        }
+        
+        function testAudioContext() {
+            try {
+                if (typeof bit8Music !== 'undefined') {
+                    updateStatus('✅ 8bit音乐系统已加载');
+                    log('音乐系统实例: ' + typeof bit8Music);
+                    log('音频上下文: ' + (bit8Music.audioContext ? '已创建' : '未创建'));
+                    log('可用曲目: ' + Object.keys(bit8Music.tracks).join(', '));
+                } else {
+                    updateStatus('❌ 8bit音乐系统未加载');
+                }
+            } catch (e) {
+                updateStatus('❌ 测试失败: ' + e.message);
+                log('错误: ' + e.message);
+            }
+        }
+        
+        function testAllTracks() {
+            if (typeof bit8Music === 'undefined') {
+                updateStatus('❌ 音乐系统未加载');
+                return;
+            }
+            
+            const tracks = Object.keys(bit8Music.tracks);
+            let currentTrackIndex = 0;
+            
+            function playNextTrack() {
+                if (currentTrackIndex >= tracks.length) {
+                    updateStatus('✅ 所有曲目测试完成');
+                    return;
+                }
+                
+                const trackName = tracks[currentTrackIndex];
+                const track = bit8Music.tracks[trackName];
+                
+                updateStatus(`正在测试: ${track.name} (${trackName})`);
+                highlightTrack(trackName);
+                
+                bit8Music.playTrack(trackName, false).then(() => {
+                    log(`✅ ${track.name} 播放成功`);
+                    currentTrackIndex++;
+                    setTimeout(playNextTrack, 3000); // 3秒后测试下一首
+                }).catch(e => {
+                    log(`❌ ${track.name} 播放失败: ${e.message}`);
+                    currentTrackIndex++;
+                    setTimeout(playNextTrack, 1000);
+                });
+            }
+            
+            playNextTrack();
+        }
+        
+        function stopAllMusic() {
+            if (typeof bit8Music !== 'undefined') {
+                bit8Music.stopTrack();
+                updateStatus('⏹️ 音乐已停止');
+                clearHighlight();
+            }
+        }
+        
+        function playTrack(trackName) {
+            if (typeof bit8Music === 'undefined') {
+                updateStatus('❌ 音乐系统未加载');
+                return;
+            }
+            
+            const track = bit8Music.tracks[trackName];
+            if (track) {
+                updateStatus(`正在播放: ${track.name}`);
+                highlightTrack(trackName);
+                bit8Music.playTrack(trackName, true);
+            }
+        }
+        
+        function highlightTrack(trackName) {
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('playing');
+            });
+            const trackElement = document.querySelector(`[data-track="${trackName}"]`);
+            if (trackElement) {
+                trackElement.classList.add('playing');
+            }
+        }
+        
+        function clearHighlight() {
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('playing');
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            log('页面加载完成');
+            
+            // 等待音乐系统加载
+            setTimeout(() => {
+                testAudioContext();
+                
+                // 生成曲目列表
+                if (typeof bit8Music !== 'undefined') {
+                    const trackList = document.getElementById('trackList');
+                    Object.keys(bit8Music.tracks).forEach(trackName => {
+                        const track = bit8Music.tracks[trackName];
+                        const trackElement = document.createElement('div');
+                        trackElement.className = 'track-item';
+                        trackElement.setAttribute('data-track', trackName);
+                        trackElement.innerHTML = `
+                            <div style="font-weight: bold;">${track.name}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">${track.theme || trackName}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">BPM: ${track.tempo} | 波形: ${track.waveform}</div>
+                        `;
+                        trackElement.onclick = () => playTrack(trackName);
+                        trackList.appendChild(trackElement);
+                    });
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

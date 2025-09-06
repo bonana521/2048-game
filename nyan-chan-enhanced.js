@@ -442,8 +442,8 @@ class NyanChanEnhanced {
     async play8BitMusic() {
         try {
             if (this.bit8Music) {
-                // 使用专业的8bit音乐系统
-                const tracks = ['happy', 'peaceful', 'energetic', 'game'];
+                // 使用专业的8bit音乐系统 - 使用新的曲目名称
+                const tracks = ['morning', 'forest', 'ocean', 'adventure', 'puzzle', 'arcade', 'nostalgic', 'dreamscape'];
                 const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
                 await this.bit8Music.playTrack(randomTrack, true);
             } else {
