@@ -177,6 +177,24 @@
             box-shadow: 0 8px 25px rgba(0, 255, 136, 0.6);
         }
 
+        .game-ecosystem .game-icon {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+        }
+
+        .game-ecosystem .feature-tag {
+            background: rgba(255, 107, 53, 0.1);
+            color: #ff6b35;
+        }
+
+        .game-ecosystem .play-btn {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .game-ecosystem .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6);
+        }
+
         .features {
             display: flex;
             justify-content: center;
@@ -340,6 +358,10 @@
             animation-delay: 0.6s;
         }
 
+        .game-card:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
         @keyframes slideInUp {
             from {
                 opacity: 0;
@@ -396,6 +418,19 @@
                 <span class="feature-tag">📊 实时统计</span>
             </div>
         </div>
+
+        <div class="game-card game-ecosystem">
+            <div class="game-icon">🌿</div>
+            <h2>生态系统演化</h2>
+            <p>基于生命游戏的多物种生态模拟！观察植物、草食动物、肉食动物的食物链关系，体验生态平衡与演化的奇妙过程。</p>
+            <a href="ecosystem.html" class="play-btn">开始模拟</a>
+            <div class="features">
+                <span class="feature-tag">🌱 多物种共存</span>
+                <span class="feature-tag">🔄 食物链动态</span>
+                <span class="feature-tag">📈 种群统计</span>
+                <span class="feature-tag">🌍 资源竞争</span>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -404,6 +439,7 @@
             <a href="2048.html">2048游戏</a>
             <a href="pacman.html">吃豆人游戏</a>
             <a href="gameoflife.html">生命游戏</a>
+            <a href="ecosystem.html">生态模拟</a>
         </div>
     </div>
 
@@ -483,6 +519,8 @@
                 window.location.href = 'pacman.html';
             } else if (e.key === '3') {
                 window.location.href = 'gameoflife.html';
+            } else if (e.key === '4') {
+                window.location.href = 'ecosystem.html';
             }
         });
     </script>

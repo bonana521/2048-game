@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生态系统演化模拟器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #16a085 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .simulation-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            box-shadow: 0 5px 15px rgba(81, 207, 102, 0.4);
+        }
+
+        .parameter-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .parameter-control label {
+            font-weight: bold;
+        }
+
+        .parameter-control input {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            padding: 4px 8px;
+            color: white;
+            width: 60px;
+            font-size: 12px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        #ecosystemCanvas {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .stats-panel h3 {
+            margin-bottom: 10px;
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+        }
+
+        .species-legend {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .species-legend h3 {
+            margin-bottom: 10px;
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            margin-right: 8px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            height: 200px;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 10px;
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        #populationChart {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .info-panel h3 {
+            margin-bottom: 10px;
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .home-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .parameter-control {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌿 生态系统演化模拟器</h1>
+        <p>基于康威生命游戏的多物种生态演化模拟</p>
+    </div>
+
+    <div class="simulation-container">
+        <div class="controls">
+            <button class="btn success" id="startBtn">开始演化</button>
+            <button class="btn danger" id="stopBtn">停止</button>
+            <button class="btn" id="stepBtn">单步</button>
+            <button class="btn" id="resetBtn">重置</button>
+            <button class="btn" id="randomBtn">随机生态</button>
+            
+            <div class="parameter-control">
+                <label for="speedInput">速度:</label>
+                <input type="number" id="speedInput" value="200" min="50" max="2000">
+            </div>
+            
+            <div class="parameter-control">
+                <label for="resourceInput">资源:</label>
+                <input type="number" id="resourceInput" value="100" min="10" max="200">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="ecosystemCanvas" width="600" height="400"></canvas>
+            </div>
+
+            <div class="sidebar">
+                <div class="stats-panel">
+                    <h3>📊 生态统计</h3>
+                    <div class="stat-item">
+                        <span>演化代数:</span>
+                        <span class="stat-value" id="generation">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🌱 植物数量:</span>
+                        <span class="stat-value" id="plants">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🐰 草食动物:</span>
+                        <span class="stat-value" id="herbivores">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🦁 肉食动物:</span>
+                        <span class="stat-value" id="carnivores">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⚡ 总能量:</span>
+                        <span class="stat-value" id="totalEnergy">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🌍 平均资源:</span>
+                        <span class="stat-value" id="avgResources">0</span>
+                    </div>
+                </div>
+
+                <div class="species-legend">
+                    <h3>🎨 物种图例</h3>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00ff00;"></div>
+                        <span>🌱 植物 (生产者)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #0000ff;"></div>
+                        <span>🐰 草食动物</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff0000;"></div>
+                        <span>🦁 肉食动物</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(139, 69, 19, 0.5);"></div>
+                        <span>🌍 环境资源</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>📈 种群动态</h3>
+                    <canvas id="populationChart"></canvas>
+                </div>
+
+                <div class="info-panel">
+                    <h3>🔬 模拟说明</h3>
+                    <p><strong>生态规则:</strong></p>
+                    <ul style="margin-left: 15px; margin-bottom: 10px;">
+                        <li>植物通过光合作用生长</li>
+                        <li>草食动物以植物为食</li>
+                        <li>肉食动物捕食草食动物</li>
+                        <li>资源有限，竞争激烈</li>
+                    </ul>
+                    <p><strong>观察要点:</strong> 种群波动、生态平衡、灭绝事件</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="games_home.html" class="home-btn">返回主页</a>
+        </div>
+    </div>
+
+    <script>
+        class EcosystemSimulation {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.cellSize = 4;
+                this.cols = Math.floor(canvas.width / this.cellSize);
+                this.rows = Math.floor(canvas.height / this.cellSize);
+                
+                // 生态系统参数
+                this.species = [
+                    { name: "植物", color: "#00ff00", energy: 1, reproductionRate: 0.4, maxAge: 100, type: "producer" },
+                    { name: "草食动物", color: "#0000ff", energy: 2, reproductionRate: 0.2, maxAge: 50, type: "herbivore" },
+                    { name: "肉食动物", color: "#ff0000", energy: 3, reproductionRate: 0.1, maxAge: 30, type: "carnivore" }
+                ];
+                
+                this.grid = this.initializeGrid();
+                this.resources = this.initializeResources();
+                this.generation = 0;
+                this.isRunning = false;
+                this.speed = 200;
+                this.lastTime = 0;
+                
+                // 统计数据
+                this.statistics = { plants: 0, herbivores: 0, carnivores: 0, totalEnergy: 0, avgResources: 0 };
+                this.populationHistory = [];
+                this.maxHistoryLength = 100;
+                
+                this.initializeEcosystem();
+            }
+            
+            initializeGrid() {
+                const grid = [];
+                for (let y = 0; y < this.rows; y++) {
+                    grid[y] = [];
+                    for (let x = 0; x < this.cols; x++) {
+                        grid[y][x] = {
+                            alive: false,
+                            species: null,
+                            energy: 0,
+                            age: 0,
+                            type: null,
+                            x: x,
+                            y: y
+                        };
+                    }
+                }
+                return grid;
+            }
+            
+            initializeResources() {
+                const resources = [];
+                for (let y = 0; y < this.rows; y++) {
+                    resources[y] = [];
+                    for (let x = 0; x < this.cols; x++) {
+                        // 创建资源丰富的区域
+                        const centerX = this.cols / 2;
+                        const centerY = this.rows / 2;
+                        const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                        const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+                        
+                        resources[y][x] = Math.max(20, 100 - (distance / maxDistance) * 80) + Math.random() * 20;
+                    }
+                }
+                return resources;
+            }
+            
+            initializeEcosystem() {
+                // 随机分布初始种群
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        if (Math.random() < 0.3) {
+                            const speciesIndex = Math.floor(Math.random() * this.species.length);
+                            const species = this.species[speciesIndex];
+                            
+                            this.grid[y][x] = {
+                                alive: true,
+                                species: species.name,
+                                energy: species.energy,
+                                age: 0,
+                                type: species.type,
+                                x: x,
+                                y: y
+                            };
+                        }
+                    }
+                }
+            }
+            
+            getNeighbors(x, y) {
+                const neighbors = [];
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        
+                        if (nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows) {
+                            neighbors.push(this.grid[ny][nx]);
+                        }
+                    }
+                }
+                return neighbors;
+            }
+            
+            evolveEcosystem() {
+                const newGrid = this.initializeGrid();
+                
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        const cell = this.grid[y][x];
+                        const neighbors = this.getNeighbors(x, y);
+                        
+                        if (cell.alive) {
+                            // 处理存活个体
+                            const survivalChance = this.calculateSurvival(cell, neighbors);
+                            
+                            if (survivalChance > Math.random()) {
+                                newGrid[y][x] = this.updateCell(cell, neighbors);
+                                this.attemptReproduction(newGrid, x, y, neighbors);
+                            }
+                        } else {
+                            // 处理新生个体
+                            const birthChance = this.calculateBirth(neighbors);
+                            if (birthChance > Math.random()) {
+                                newGrid[y][x] = this.createNewCell(neighbors, x, y);
+                            }
+                        }
+                        
+                        // 环境资源变化
+                        this.updateResources(x, y);
+                    }
+                }
+                
+                this.grid = newGrid;
+                this.generation++;
+                this.updateStatistics();
+            }
+            
+            calculateSurvival(cell, neighbors) {
+                let chance = 0.6;
+                
+                // 年龄因素
+                const species = this.species.find(s => s.name === cell.species);
+                if (species && cell.age > species.maxAge * 0.8) {
+                    chance *= 0.3;
+                }
+                
+                // 能量因素
+                if (cell.energy < 0.5) chance *= 0.2;
+                
+                // 环境资源
+                const localResources = this.resources[cell.y][cell.x];
+                chance *= (localResources / 100);
+                
+                // 种群密度
+                const sameSpecies = neighbors.filter(n => n.species === cell.species).length;
+                if (sameSpecies > 4) chance *= 0.4;
+                
+                // 捕食压力
+                if (cell.type === "herbivore") {
+                    const predators = neighbors.filter(n => n.type === "carnivore" && n.alive).length;
+                    chance *= Math.max(0.1, 1 - predators * 0.4);
+                }
+                
+                if (cell.type === "carnivore") {
+                    const prey = neighbors.filter(n => n.type === "herbivore" && n.alive).length;
+                    if (prey === 0) chance *= 0.3;
+                }
+                
+                return Math.min(1, chance);
+            }
+            
+            calculateBirth(neighbors) {
+                let birthChance = 0;
+                
+                const plants = neighbors.filter(n => n.type === "producer" && n.alive).length;
+                const herbivores = neighbors.filter(n => n.type === "herbivore" && n.alive).length;
+                const carnivores = neighbors.filter(n => n.type === "carnivore" && n.alive).length;
+                
+                // 植物繁殖
+                if (plants >= 2 && plants <= 4) {
+                    birthChance = Math.max(birthChance, 0.3);
+                }
+                
+                // 草食动物繁殖（需要充足食物）
+                if (herbivores >= 2 && plants >= 3) {
+                    birthChance = Math.max(birthChance, 0.15);
+                }
+                
+                // 肉食动物繁殖（需要猎物）
+                if (carnivores >= 2 && herbivores >= 2) {
+                    birthChance = Math.max(birthChance, 0.08);
+                }
+                
+                return birthChance;
+            }
+            
+            updateCell(cell, neighbors) {
+                const newCell = { ...cell };
+                const species = this.species.find(s => s.name === cell.species);
+                
+                if (!species) return newCell;
+                
+                // 能量消耗
+                newCell.energy -= 0.05;
+                newCell.age++;
+                
+                // 觅食行为
+                if (cell.type === "producer") {
+                    // 植物通过光合作用获得能量
+                    const localResources = this.resources[cell.y][cell.x];
+                    newCell.energy += localResources * 0.01;
+                    this.resources[cell.y][cell.x] *= 0.99; // 消耗资源
+                } else if (cell.type === "herbivore") {
+                    // 草食动物吃植物
+                    const plants = neighbors.filter(n => n.type === "producer" && n.alive);
+                    if (plants.length > 0) {
+                        newCell.energy += 0.3;
+                        this.resources[cell.y][cell.x] *= 0.95;
+                    }
+                } else if (cell.type === "carnivore") {
+                    // 肉食动物捕食
+                    const prey = neighbors.filter(n => n.type === "herbivore" && n.alive);
+                    if (prey.length > 0) {
+                        newCell.energy += 0.5;
+                    }
+                }
+                
+                // 死亡条件
+                if (newCell.energy <= 0 || newCell.age > species.maxAge) {
+                    newCell.alive = false;
+                }
+                
+                return newCell;
+            }
+            
+            attemptReproduction(newGrid, x, y, neighbors) {
+                const cell = this.grid[y][x];
+                if (!cell.alive) return;
+                
+                const species = this.species.find(s => s.name === cell.species);
+                if (!species || cell.energy < species.energy * 0.8) return;
+                
+                // 寻找空的邻居位置
+                const emptyNeighbors = [];
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        if (dx === 0 && dy === 0) continue;
+                        
+                        const nx = x + dx;
+                        const ny = y + dy;
+                        
+                        if (nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows && !newGrid[ny][nx].alive) {
+                            emptyNeighbors.push({ x: nx, y: ny });
+                        }
+                    }
+                }
+                
+                if (emptyNeighbors.length > 0 && Math.random() < species.reproductionRate) {
+                    const location = emptyNeighbors[Math.floor(Math.random() * emptyNeighbors.length)];
+                    newGrid[location.y][location.x] = {
+                        alive: true,
+                        species: species.name,
+                        energy: species.energy * 0.5,
+                        age: 0,
+                        type: species.type,
+                        x: location.x,
+                        y: location.y
+                    };
+                    cell.energy *= 0.7; // 繁殖消耗能量
+                }
+            }
+            
+            createNewCell(neighbors, x, y) {
+                // 根据邻居决定新生物类型
+                const plants = neighbors.filter(n => n.type === "producer" && n.alive).length;
+                const herbivores = neighbors.filter(n => n.type === "herbivore" && n.alive).length;
+                const carnivores = neighbors.filter(n => n.type === "carnivore" && n.alive).length;
+                
+                let speciesType = null;
+                
+                if (plants > herbivores && plants > carnivores) {
+                    speciesType = "producer";
+                } else if (herbivores > carnivores) {
+                    speciesType = "herbivore";
+                } else if (carnivores > 0) {
+                    speciesType = "carnivore";
+                }
+                
+                if (speciesType) {
+                    const species = this.species.find(s => s.type === speciesType);
+                    return {
+                        alive: true,
+                        species: species.name,
+                        energy: species.energy * 0.8,
+                        age: 0,
+                        type: speciesType,
+                        x: x,
+                        y: y
+                    };
+                }
+                
+                return { alive: false, species: null, energy: 0, age: 0, type: null, x: x, y: y };
+            }
+            
+            updateResources(x, y) {
+                // 资源自然再生
+                this.resources[y][x] = Math.min(100, this.resources[y][x] + 0.2);
+                
+                // 季节性变化
+                const seasonalEffect = Math.sin(this.generation * 0.02) * 5;
+                this.resources[y][x] += seasonalEffect * 0.1;
+            }
+            
+            updateStatistics() {
+                this.statistics = { plants: 0, herbivores: 0, carnivores: 0, totalEnergy: 0, avgResources: 0 };
+                let totalResources = 0;
+                let resourceCount = 0;
+                
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        const cell = this.grid[y][x];
+                        if (cell.alive) {
+                            if (cell.type === "producer") this.statistics.plants++;
+                            else if (cell.type === "herbivore") this.statistics.herbivores++;
+                            else if (cell.type === "carnivore") this.statistics.carnivores++;
+                            
+                            this.statistics.totalEnergy += cell.energy;
+                        }
+                        
+                        totalResources += this.resources[y][x];
+                        resourceCount++;
+                    }
+                }
+                
+                this.statistics.avgResources = Math.round(totalResources / resourceCount);
+                
+                // 更新历史数据
+                this.populationHistory.push({
+                    generation: this.generation,
+                    plants: this.statistics.plants,
+                    herbivores: this.statistics.herbivores,
+                    carnivores: this.statistics.carnivores
+                });
+                
+                if (this.populationHistory.length > this.maxHistoryLength) {
+                    this.populationHistory.shift();
+                }
+            }
+            
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制资源背景
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        const resourceLevel = this.resources[y][x] / 100;
+                        this.ctx.fillStyle = `rgba(139, 69, 19, ${resourceLevel * 0.4})`;
+                        this.ctx.fillRect(x * this.cellSize, y * this.cellSize, this.cellSize, this.cellSize);
+                    }
+                }
+                
+                // 绘制生物
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        const cell = this.grid[y][x];
+                        if (cell.alive) {
+                            const species = this.species.find(s => s.name === cell.species);
+                            if (species) {
+                                // 根据能量调整透明度
+                                const alpha = Math.max(0.3, Math.min(1, cell.energy / species.energy));
+                                const color = this.hexToRgba(species.color, alpha);
+                                
+                                this.ctx.fillStyle = color;
+                                this.ctx.fillRect(
+                                    x * this.cellSize,
+                                    y * this.cellSize,
+                                    this.cellSize,
+                                    this.cellSize
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            
+            hexToRgba(hex, alpha) {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+            
+            start() {
+                this.isRunning = true;
+                this.animate();
+            }
+            
+            stop() {
+                this.isRunning = false;
+            }
+            
+            step() {
+                this.evolveEcosystem();
+                this.render();
+                this.updateUI();
+            }
+            
+            reset() {
+                this.grid = this.initializeGrid();
+                this.resources = this.initializeResources();
+                this.generation = 0;
+                this.populationHistory = [];
+                this.initializeEcosystem();
+                this.render();
+                this.updateUI();
+            }
+            
+            randomize() {
+                this.grid = this.initializeGrid();
+                this.resources = this.initializeResources();
+                this.generation = 0;
+                this.populationHistory = [];
+                
+                // 创建更复杂的初始生态
+                for (let i = 0; i < 200; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    const speciesIndex = Math.floor(Math.random() * this.species.length);
+                    const species = this.species[speciesIndex];
+                    
+                    this.grid[y][x] = {
+                        alive: true,
+                        species: species.name,
+                        energy: species.energy,
+                        age: 0,
+                        type: species.type,
+                        x: x,
+                        y: y
+                    };
+                }
+                
+                this.render();
+                this.updateUI();
+            }
+            
+            animate() {
+                if (!this.isRunning) return;
+                
+                this.step();
+                setTimeout(() => this.animate(), this.speed);
+            }
+            
+            updateUI() {
+                document.getElementById('generation').textContent = this.generation;
+                document.getElementById('plants').textContent = this.statistics.plants;
+                document.getElementById('herbivores').textContent = this.statistics.herbivores;
+                document.getElementById('carnivores').textContent = this.statistics.carnivores;
+                document.getElementById('totalEnergy').textContent = Math.round(this.statistics.totalEnergy);
+                document.getElementById('avgResources').textContent = this.statistics.avgResources;
+                
+                this.drawPopulationChart();
+            }
+            
+            drawPopulationChart() {
+                const chartCanvas = document.getElementById('populationChart');
+                const ctx = chartCanvas.getContext('2d');
+                const width = chartCanvas.width;
+                const height = chartCanvas.height;
+                
+                ctx.clearRect(0, 0, width, height);
+                
+                if (this.populationHistory.length < 2) return;
+                
+                const maxValue = Math.max(
+                    ...this.populationHistory.map(h => Math.max(h.plants, h.herbivores, h.carnivores))
+                );
+                
+                const colors = {
+                    plants: '#00ff00',
+                    herbivores: '#0000ff',
+                    carnivores: '#ff0000'
+                };
+                
+                ['plants', 'herbivores', 'carnivores'].forEach(species => {
+                    ctx.strokeStyle = colors[species];
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    
+                    this.populationHistory.forEach((point, index) => {
+                        const x = (index / (this.maxHistoryLength - 1)) * width;
+                        const y = height - (point[species] / maxValue) * height * 0.9 - 5;
+                        
+                        if (index === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    });
+                    
+                    ctx.stroke();
+                });
+            }
+            
+            setSpeed(speed) {
+                this.speed = Math.max(50, Math.min(2000, speed));
+            }
+            
+            setResourceLevel(level) {
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        this.resources[y][x] = Math.min(100, this.resources[y][x] * (level / 100));
+                    }
+                }
+            }
+        }
+
+        // 初始化模拟器
+        const canvas = document.getElementById('ecosystemCanvas');
+        const ecosystem = new EcosystemSimulation(canvas);
+
+        // 控制按钮
+        document.getElementById('startBtn').addEventListener('click', () => {
+            ecosystem.start();
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            ecosystem.stop();
+        });
+
+        document.getElementById('stepBtn').addEventListener('click', () => {
+            ecosystem.step();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            ecosystem.reset();
+        });
+
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            ecosystem.randomize();
+        });
+
+        document.getElementById('speedInput').addEventListener('input', (e) => {
+            ecosystem.setSpeed(parseInt(e.target.value));
+        });
+
+        document.getElementById('resourceInput').addEventListener('input', (e) => {
+            ecosystem.setResourceLevel(parseInt(e.target.value));
+        });
+
+        // 初始渲染
+        ecosystem.render();
+        ecosystem.updateUI();
+    </script>
+</body>
+</html>
