@@ -300,6 +300,14 @@
             </div>
         </div>
 
+        <div class="controls">
+            <span style="font-size: 12px; font-weight: bold; margin-right: 10px;">预设生态方案:</span>
+            <button class="btn" onclick="ecosystem.loadPreset('balanced')">平衡生态</button>
+            <button class="btn" onclick="ecosystem.loadPreset('plantDominated')">植物主导</button>
+            <button class="btn" onclick="ecosystem.loadPreset('predatorPrey')">捕食生态</button>
+            <button class="btn" onclick="ecosystem.loadPreset('islands')">生态岛屿</button>
+        </div>
+
         <div class="main-content">
             <div class="canvas-container">
                 <canvas id="ecosystemCanvas" width="600" height="400"></canvas>
@@ -387,11 +395,11 @@
                 this.cols = Math.floor(canvas.width / this.cellSize);
                 this.rows = Math.floor(canvas.height / this.cellSize);
                 
-                // 生态系统参数
+                // 生态系统参数 - 经过测试的平衡设置
                 this.species = [
-                    { name: "植物", color: "#00ff00", energy: 1, reproductionRate: 0.4, maxAge: 100, type: "producer" },
-                    { name: "草食动物", color: "#0000ff", energy: 2, reproductionRate: 0.2, maxAge: 50, type: "herbivore" },
-                    { name: "肉食动物", color: "#ff0000", energy: 3, reproductionRate: 0.1, maxAge: 30, type: "carnivore" }
+                    { name: "植物", color: "#00ff00", energy: 3, reproductionRate: 0.6, maxAge: 200, type: "producer" },
+                    { name: "草食动物", color: "#0000ff", energy: 5, reproductionRate: 0.4, maxAge: 80, type: "herbivore" },
+                    { name: "肉食动物", color: "#ff0000", energy: 8, reproductionRate: 0.25, maxAge: 60, type: "carnivore" }
                 ];
                 
                 this.grid = this.initializeGrid();
@@ -446,10 +454,10 @@
             }
             
             initializeEcosystem() {
-                // 随机分布初始种群
+                // 随机分布初始种群 - 降低密度
                 for (let y = 0; y < this.rows; y++) {
                     for (let x = 0; x < this.cols; x++) {
-                        if (Math.random() < 0.3) {
+                        if (Math.random() < 0.15) { // 降低初始密度
                             const speciesIndex = Math.floor(Math.random() * this.species.length);
                             const species = this.species[speciesIndex];
                             
@@ -519,37 +527,40 @@
             }
             
             calculateSurvival(cell, neighbors) {
-                let chance = 0.6;
+                let chance = 0.8; // 提高基础生存率
                 
-                // 年龄因素
+                // 年龄因素 - 更宽松的年龄限制
                 const species = this.species.find(s => s.name === cell.species);
-                if (species && cell.age > species.maxAge * 0.8) {
-                    chance *= 0.3;
+                if (species && cell.age > species.maxAge * 0.9) {
+                    chance *= 0.5; // 降低年龄惩罚
                 }
                 
-                // 能量因素
-                if (cell.energy < 0.5) chance *= 0.2;
+                // 能量因素 - 更宽容的能量要求
+                if (cell.energy < 1) chance *= 0.4;
+                else if (cell.energy < 2) chance *= 0.7;
                 
-                // 环境资源
+                // 环境资源 - 降低资源依赖
                 const localResources = this.resources[cell.y][cell.x];
-                chance *= (localResources / 100);
+                chance *= Math.max(0.3, localResources / 100);
                 
-                // 种群密度
+                // 种群密度 - 更宽松的密度限制
                 const sameSpecies = neighbors.filter(n => n.species === cell.species).length;
-                if (sameSpecies > 4) chance *= 0.4;
+                if (sameSpecies > 6) chance *= 0.6;
+                else if (sameSpecies > 4) chance *= 0.8;
                 
-                // 捕食压力
+                // 捕食压力 - 降低捕食影响
                 if (cell.type === "herbivore") {
                     const predators = neighbors.filter(n => n.type === "carnivore" && n.alive).length;
-                    chance *= Math.max(0.1, 1 - predators * 0.4);
+                    chance *= Math.max(0.2, 1 - predators * 0.25);
                 }
                 
                 if (cell.type === "carnivore") {
                     const prey = neighbors.filter(n => n.type === "herbivore" && n.alive).length;
-                    if (prey === 0) chance *= 0.3;
+                    if (prey === 0) chance *= 0.5; // 提高饥饿生存率
+                    else if (prey === 1) chance *= 0.7;
                 }
                 
-                return Math.min(1, chance);
+                return Math.min(1, Math.max(0.1, chance)); // 确保最低生存率
             }
             
             calculateBirth(neighbors) {
@@ -559,19 +570,19 @@
                 const herbivores = neighbors.filter(n => n.type === "herbivore" && n.alive).length;
                 const carnivores = neighbors.filter(n => n.type === "carnivore" && n.alive).length;
                 
-                // 植物繁殖
-                if (plants >= 2 && plants <= 4) {
-                    birthChance = Math.max(birthChance, 0.3);
+                // 植物繁殖 - 更容易繁殖
+                if (plants >= 1 && plants <= 6) {
+                    birthChance = Math.max(birthChance, 0.5);
                 }
                 
-                // 草食动物繁殖（需要充足食物）
-                if (herbivores >= 2 && plants >= 3) {
-                    birthChance = Math.max(birthChance, 0.15);
+                // 草食动物繁殖 - 降低食物要求
+                if (herbivores >= 1 && plants >= 2) {
+                    birthChance = Math.max(birthChance, 0.35);
                 }
                 
-                // 肉食动物繁殖（需要猎物）
-                if (carnivores >= 2 && herbivores >= 2) {
-                    birthChance = Math.max(birthChance, 0.08);
+                // 肉食动物繁殖 - 降低猎物要求
+                if (carnivores >= 1 && herbivores >= 1) {
+                    birthChance = Math.max(birthChance, 0.2);
                 }
                 
                 return birthChance;
@@ -583,32 +594,37 @@
                 
                 if (!species) return newCell;
                 
-                // 能量消耗
-                newCell.energy -= 0.05;
+                // 能量消耗 - 降低消耗率
+                newCell.energy -= 0.02;
                 newCell.age++;
                 
-                // 觅食行为
+                // 觅食行为 - 提高能量获取
                 if (cell.type === "producer") {
                     // 植物通过光合作用获得能量
                     const localResources = this.resources[cell.y][cell.x];
-                    newCell.energy += localResources * 0.01;
-                    this.resources[cell.y][cell.x] *= 0.99; // 消耗资源
+                    newCell.energy += localResources * 0.02; // 提高能量获取
+                    this.resources[cell.y][cell.x] *= 0.995; // 减少资源消耗
                 } else if (cell.type === "herbivore") {
                     // 草食动物吃植物
                     const plants = neighbors.filter(n => n.type === "producer" && n.alive);
                     if (plants.length > 0) {
-                        newCell.energy += 0.3;
-                        this.resources[cell.y][cell.x] *= 0.95;
+                        newCell.energy += 0.6; // 提高能量获取
+                        this.resources[cell.y][cell.x] *= 0.98;
                     }
                 } else if (cell.type === "carnivore") {
                     // 肉食动物捕食
                     const prey = neighbors.filter(n => n.type === "herbivore" && n.alive);
                     if (prey.length > 0) {
-                        newCell.energy += 0.5;
+                        newCell.energy += 1.0; // 显著提高能量获取
                     }
                 }
                 
-                // 死亡条件
+                // 能量上限限制
+                if (newCell.energy > species.energy * 1.5) {
+                    newCell.energy = species.energy * 1.5;
+                }
+                
+                // 死亡条件 - 更宽松的死亡条件
                 if (newCell.energy <= 0 || newCell.age > species.maxAge) {
                     newCell.alive = false;
                 }
@@ -621,7 +637,7 @@
                 if (!cell.alive) return;
                 
                 const species = this.species.find(s => s.name === cell.species);
-                if (!species || cell.energy < species.energy * 0.8) return;
+                if (!species || cell.energy < species.energy * 0.6) return; // 降低繁殖能量要求
                 
                 // 寻找空的邻居位置
                 const emptyNeighbors = [];
@@ -643,13 +659,13 @@
                     newGrid[location.y][location.x] = {
                         alive: true,
                         species: species.name,
-                        energy: species.energy * 0.5,
+                        energy: species.energy * 0.7, // 提高后代初始能量
                         age: 0,
                         type: species.type,
                         x: location.x,
                         y: location.y
                     };
-                    cell.energy *= 0.7; // 繁殖消耗能量
+                    cell.energy *= 0.8; // 减少繁殖能量消耗
                 }
             }
             
@@ -686,12 +702,12 @@
             }
             
             updateResources(x, y) {
-                // 资源自然再生
-                this.resources[y][x] = Math.min(100, this.resources[y][x] + 0.2);
+                // 资源自然再生 - 提高再生率
+                this.resources[y][x] = Math.min(100, this.resources[y][x] + 0.5);
                 
-                // 季节性变化
-                const seasonalEffect = Math.sin(this.generation * 0.02) * 5;
-                this.resources[y][x] += seasonalEffect * 0.1;
+                // 季节性变化 - 减少季节性波动
+                const seasonalEffect = Math.sin(this.generation * 0.01) * 3;
+                this.resources[y][x] += seasonalEffect * 0.05;
             }
             
             updateStatistics() {
@@ -805,7 +821,7 @@
                 this.populationHistory = [];
                 
                 // 创建更复杂的初始生态
-                for (let i = 0; i < 200; i++) {
+                for (let i = 0; i < 150; i++) {
                     const x = Math.floor(Math.random() * this.cols);
                     const y = Math.floor(Math.random() * this.rows);
                     const speciesIndex = Math.floor(Math.random() * this.species.length);
@@ -824,6 +840,152 @@
                 
                 this.render();
                 this.updateUI();
+            }
+            
+            // 预设生态方案
+            loadPreset(presetName) {
+                this.grid = this.initializeGrid();
+                this.resources = this.initializeResources();
+                this.generation = 0;
+                this.populationHistory = [];
+                
+                const centerX = Math.floor(this.cols / 2);
+                const centerY = Math.floor(this.rows / 2);
+                
+                switch(presetName) {
+                    case "balanced":
+                        // 平衡生态 - 均匀分布
+                        this.createBalancedEcosystem();
+                        break;
+                    case "plantDominated":
+                        // 植物主导生态
+                        this.createPlantDominatedEcosystem();
+                        break;
+                    case "predatorPrey":
+                        // 捕食者-猎物生态
+                        this.createPredatorPreyEcosystem();
+                        break;
+                    case "islands":
+                        // 生态岛屿
+                        this.createIslandEcosystem();
+                        break;
+                    default:
+                        this.randomize();
+                }
+                
+                this.render();
+                this.updateUI();
+            }
+            
+            createBalancedEcosystem() {
+                // 创建平衡的生态系统
+                for (let i = 0; i < 300; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    
+                    // 60% 植物，30% 草食动物，10% 肉食动物
+                    const rand = Math.random();
+                    let speciesIndex;
+                    if (rand < 0.6) speciesIndex = 0; // 植物
+                    else if (rand < 0.9) speciesIndex = 1; // 草食动物
+                    else speciesIndex = 2; // 肉食动物
+                    
+                    const species = this.species[speciesIndex];
+                    this.grid[y][x] = {
+                        alive: true,
+                        species: species.name,
+                        energy: species.energy,
+                        age: 0,
+                        type: species.type,
+                        x: x,
+                        y: y
+                    };
+                }
+            }
+            
+            createPlantDominatedEcosystem() {
+                // 植物主导的生态系统
+                for (let i = 0; i < 400; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    
+                    // 80% 植物，15% 草食动物，5% 肉食动物
+                    const rand = Math.random();
+                    let speciesIndex;
+                    if (rand < 0.8) speciesIndex = 0; // 植物
+                    else if (rand < 0.95) speciesIndex = 1; // 草食动物
+                    else speciesIndex = 2; // 肉食动物
+                    
+                    const species = this.species[speciesIndex];
+                    this.grid[y][x] = {
+                        alive: true,
+                        species: species.name,
+                        energy: species.energy,
+                        age: 0,
+                        type: species.type,
+                        x: x,
+                        y: y
+                    };
+                }
+            }
+            
+            createPredatorPreyEcosystem() {
+                // 捕食者-猎物生态系统
+                for (let i = 0; i < 250; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    
+                    // 50% 植物，40% 草食动物，10% 肉食动物
+                    const rand = Math.random();
+                    let speciesIndex;
+                    if (rand < 0.5) speciesIndex = 0; // 植物
+                    else if (rand < 0.9) speciesIndex = 1; // 草食动物
+                    else speciesIndex = 2; // 肉食动物
+                    
+                    const species = this.species[speciesIndex];
+                    this.grid[y][x] = {
+                        alive: true,
+                        species: species.name,
+                        energy: species.energy,
+                        age: 0,
+                        type: species.type,
+                        x: x,
+                        y: y
+                    };
+                }
+            }
+            
+            createIslandEcosystem() {
+                // 创建生态岛屿
+                const islands = [
+                    { x: this.cols * 0.25, y: this.rows * 0.25, radius: 30 },
+                    { x: this.cols * 0.75, y: this.rows * 0.25, radius: 25 },
+                    { x: this.cols * 0.5, y: this.rows * 0.75, radius: 35 }
+                ];
+                
+                islands.forEach(island => {
+                    for (let i = 0; i < 80; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = Math.random() * island.radius;
+                        const x = Math.floor(island.x + Math.cos(angle) * radius);
+                        const y = Math.floor(island.y + Math.sin(angle) * radius);
+                        
+                        if (x >= 0 && x < this.cols && y >= 0 && y < this.rows) {
+                            const speciesIndex = Math.floor(Math.random() * this.species.length);
+                            const species = this.species[speciesIndex];
+                            
+                            this.grid[y][x] = {
+                                alive: true,
+                                species: species.name,
+                                energy: species.energy,
+                                age: 0,
+                                type: species.type,
+                                x: x,
+                                y: y
+                            };
+                        }
+                    }
+                });
             }
             
             animate() {
@@ -895,6 +1057,55 @@
                     }
                 }
             }
+            
+            loadPreset(config) {
+                this.clear();
+                this.generation = 0;
+                
+                // 设置资源水平
+                for (let y = 0; y < this.rows; y++) {
+                    for (let x = 0; x < this.cols; x++) {
+                        this.resources[y][x] = config.resources;
+                    }
+                }
+                
+                // 计算需要放置的生物数量
+                const totalCells = this.rows * this.cols;
+                const plantCount = Math.floor(totalCells * config.plants);
+                const herbivoreCount = Math.floor(totalCells * config.herbivores);
+                const carnivoreCount = Math.floor(totalCells * config.carnivores);
+                
+                // 随机放置植物
+                for (let i = 0; i < plantCount; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    if (!this.grid[y][x].alive) {
+                        this.addOrganism(x, y, 0); // 植物
+                    }
+                }
+                
+                // 随机放置草食动物
+                for (let i = 0; i < herbivoreCount; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    if (!this.grid[y][x].alive) {
+                        this.addOrganism(x, y, 1); // 草食动物
+                    }
+                }
+                
+                // 随机放置肉食动物
+                for (let i = 0; i < carnivoreCount; i++) {
+                    const x = Math.floor(Math.random() * this.cols);
+                    const y = Math.floor(Math.random() * this.rows);
+                    if (!this.grid[y][x].alive) {
+                        this.addOrganism(x, y, 2); // 肉食动物
+                    }
+                }
+                
+                this.updateStatistics();
+                this.render();
+                this.updateUI();
+            }
         }
 
         // 初始化模拟器
@@ -929,6 +1140,71 @@
         document.getElementById('resourceInput').addEventListener('input', (e) => {
             ecosystem.setResourceLevel(parseInt(e.target.value));
         });
+
+        // 预设生态系统配置
+        const presetConfigs = {
+            balanced: {
+                name: "平衡生态",
+                plants: 0.3,
+                herbivores: 0.15,
+                carnivores: 0.05,
+                resources: 80
+            },
+            plantDominated: {
+                name: "植物主导",
+                plants: 0.5,
+                herbivores: 0.1,
+                carnivores: 0.02,
+                resources: 90
+            },
+            predatorPrey: {
+                name: "捕食者-猎物",
+                plants: 0.4,
+                herbivores: 0.2,
+                carnivores: 0.08,
+                resources: 70
+            },
+            islands: {
+                name: "岛屿生态",
+                plants: 0.25,
+                herbivores: 0.08,
+                carnivores: 0.03,
+                resources: 60
+            }
+        };
+
+        // 添加预设配置按钮
+        Object.keys(presetConfigs).forEach(key => {
+            const config = presetConfigs[key];
+            const button = document.createElement('button');
+            button.textContent = config.name;
+            button.className = 'preset-btn';
+            button.onclick = () => {
+                ecosystem.loadPreset(config);
+            };
+            document.querySelector('.button-group').appendChild(button);
+        });
+
+        // 为预设按钮添加样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .preset-btn {
+                background: linear-gradient(135deg, #ff6b35, #f7931e);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin: 2px;
+            }
+            .preset-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+            }
+        `;
+        document.head.appendChild(style);
 
         // 初始渲染
         ecosystem.render();
