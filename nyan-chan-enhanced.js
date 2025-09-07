@@ -169,7 +169,6 @@ class NyanChanEnhanced {
     }
     
     init() {
-        console.log("开始初始化喵酱桌宠...");
         this.createWaifu();
         this.createToolbar();
         this.createMusicPlayer();
@@ -177,7 +176,6 @@ class NyanChanEnhanced {
         this.bindEvents();
         this.showWelcomeMessage();
         this.startIdleAnimation();
-        console.log("喵酱桌宠初始化完成");
     }
     
     createWaifu() {
@@ -335,9 +333,9 @@ class NyanChanEnhanced {
                 color: white;
                 border: none;
                 border-radius: 50%;
-                width: 35px;
-                height: 35px;
-                font-size: 14px;
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 backdrop-filter: blur(5px);
@@ -414,18 +412,17 @@ class NyanChanEnhanced {
         const toolbar = document.createElement("div");
         toolbar.className = "waifu-toolbar";
         toolbar.innerHTML = `
+            <button class="toolbar-btn" title="主页" onclick="nyanChanEnhanced.goHome()">🏠</button>
             <button class="toolbar-btn" title="对话" onclick="nyanChanEnhanced.startConversation()">💬</button>
+            <button class="toolbar-btn" title="推荐游戏" onclick="nyanChanEnhanced.recommendGame()">🎮</button>
+            <button class="toolbar-btn" title="换背景" onclick="nyanChanEnhanced.changeBackground()">🎨</button>
+            <button class="toolbar-btn" title="换装" onclick="nyanChanEnhanced.changeOutfit()">👗</button>
+            <button class="toolbar-btn" title="夜间模式" onclick="nyanChanEnhanced.toggleNightMode()">🌙</button>
             <button class="toolbar-btn" title="音乐" onclick="nyanChanEnhanced.toggleMusic()">🎵</button>
             <button class="toolbar-btn" title="隐藏" onclick="nyanChanEnhanced.hide()">❌</button>
         `;
         
-        const container = document.querySelector("#nyan-chan-enhanced .waifu-container");
-        if (container) {
-            container.appendChild(toolbar);
-            console.log("工具栏创建成功");
-        } else {
-            console.error("找不到桌宠容器，无法添加工具栏");
-        }
+        document.querySelector("#nyan-chan-enhanced .waifu-container").appendChild(toolbar);
     }
     
     createMusicPlayer() {
@@ -434,49 +431,12 @@ class NyanChanEnhanced {
             this.bit8Music = bit8Music;
         } else {
             // 备用简单音乐系统
-            try {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                this.currentOscillator = null;
-                this.gainNode = this.audioContext.createGain();
-                this.gainNode.connect(this.audioContext.destination);
-                this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-                
-                // 监听用户交互来恢复音频上下文
-                this.setupAudioContextResume();
-            } catch (e) {
-                console.log('音频上下文创建失败:', e);
-                this.audioContext = null;
-            }
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.currentOscillator = null;
+            this.gainNode = this.audioContext.createGain();
+            this.gainNode.connect(this.audioContext.destination);
+            this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
         }
-    }
-    
-    setupAudioContextResume() {
-        // 监听用户交互事件来恢复音频上下文
-        const resumeOnInteraction = async () => {
-            if (this.audioContext && this.audioContext.state === 'suspended') {
-                try {
-                    await this.audioContext.resume();
-                    console.log('音频上下文已恢复');
-                } catch (e) {
-                    console.log('音频上下文恢复失败:', e);
-                }
-            }
-            if (this.bit8Music && this.bit8Music.audioContext && 
-                this.bit8Music.audioContext.state === 'suspended') {
-                try {
-                    await this.bit8Music.audioContext.resume();
-                    console.log('bit8Music 音频上下文已恢复');
-                } catch (e) {
-                    console.log('bit8Music 音频上下文恢复失败:', e);
-                }
-            }
-        };
-        
-        // 监听多种用户交互事件
-        const events = ['click', 'touchstart', 'keydown'];
-        events.forEach(event => {
-            document.addEventListener(event, resumeOnInteraction, { once: true });
-        });
     }
     
     async play8BitMusic() {
@@ -701,29 +661,15 @@ class NyanChanEnhanced {
         this.showMessage(message);
     }
     
-    async toggleMusic() {
+    toggleMusic() {
         if (this.musicPlaying) {
             this.stopMusic();
             this.musicPlaying = false;
             this.showMessage("音乐暂停了喵~ 需要的时候再打开哦！");
         } else {
-            try {
-                // 恢复音频上下文 - 处理浏览器自动播放策略
-                if (this.audioContext && this.audioContext.state === 'suspended') {
-                    await this.audioContext.resume();
-                }
-                if (this.bit8Music && this.bit8Music.audioContext && 
-                    this.bit8Music.audioContext.state === 'suspended') {
-                    await this.bit8Music.audioContext.resume();
-                }
-                
-                await this.play8BitMusic();
-                this.musicPlaying = true;
-                this.showMessage("开始播放8bit音乐喵~ 享受游戏时光吧！");
-            } catch (error) {
-                console.error('音乐播放失败:', error);
-                this.showMessage("喵~ 音乐播放失败了，点击游戏区域试试看！");
-            }
+            this.play8BitMusic();
+            this.musicPlaying = true;
+            this.showMessage("开始播放8bit音乐喵~ 享受游戏时光吧！");
         }
     }
     
@@ -736,64 +682,6 @@ class NyanChanEnhanced {
         if (waifu) {
             waifu.style.display = "none";
             this.showMessage("下次再见喵~ 我会想你的！", 2000);
-            this.createShowButton();
-        }
-    }
-    
-    createShowButton() {
-        // 移除已存在的显示按钮
-        const existingBtn = document.getElementById("waifu-show-btn");
-        if (existingBtn) {
-            existingBtn.remove();
-        }
-        
-        const showBtn = document.createElement("div");
-        showBtn.id = "waifu-show-btn";
-        showBtn.innerHTML = "🐱";
-        showBtn.title = "显示桌宠";
-        showBtn.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #ff6b9d, #ff8a80);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
-            transition: all 0.3s ease;
-            z-index: 9999;
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        `;
-        
-        showBtn.addEventListener("mouseenter", function() {
-            this.style.transform = "scale(1.1)";
-            this.style.boxShadow = "0 6px 20px rgba(255, 107, 157, 0.6)";
-        });
-        
-        showBtn.addEventListener("mouseleave", function() {
-            this.style.transform = "scale(1)";
-            this.style.boxShadow = "0 4px 15px rgba(255, 107, 157, 0.4)";
-        });
-        
-        showBtn.addEventListener("click", () => {
-            this.show();
-            showBtn.remove();
-        });
-        
-        document.body.appendChild(showBtn);
-    }
-    
-    show() {
-        const waifu = document.getElementById("nyan-chan-enhanced");
-        if (waifu) {
-            waifu.style.display = "block";
-            this.showMessage("我回来啦~ 好想喵！", 2000);
         }
     }
     
