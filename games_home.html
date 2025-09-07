@@ -213,6 +213,24 @@
             box-shadow: 0 8px 25px rgba(0, 200, 81, 0.6);
         }
 
+        .game-qiqi .game-icon {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+        }
+
+        .game-qiqi .feature-tag {
+            background: rgba(255, 105, 180, 0.1);
+            color: #ff69b4;
+        }
+
+        .game-qiqi .play-btn {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        .game-qiqi .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.6);
+        }
+
         .features {
             display: flex;
             justify-content: center;
@@ -427,6 +445,11 @@
             color: #1a1a2e;
         }
 
+        .night-mode .game-qiqi .play-btn {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -531,6 +554,19 @@
                 <span class="feature-tag">🎮 难度递增</span>
             </div>
         </div>
+
+        <div class="game-card game-qiqi">
+            <div class="game-icon">🐱</div>
+            <h2>琪琪AI助手</h2>
+            <p>可爱的兽娘AI助手！拥有智能对话、情感识别、上下文记忆能力，可以陪你聊天、提供帮助，还能视频通话哦～</p>
+            <a href="qiqi/index.html" class="play-btn">开始聊天</a>
+            <div class="features">
+                <span class="feature-tag">🧠 智能对话</span>
+                <span class="feature-tag">💕 情感识别</span>
+                <span class="feature-tag">📹 视频通话</span>
+                <span class="feature-tag">🎮 游戏陪伴</span>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -541,6 +577,7 @@
             <a href="gameoflife.html">生命游戏</a>
             <a href="ecosystem_v2.html">生态演化</a>
             <a href="snake.html">贪吃蛇游戏</a>
+            <a href="qiqi/index.html">琪琪AI助手</a>
         </div>
     </div>
 
@@ -622,6 +659,8 @@
                 window.location.href = 'gameoflife.html';
             } else if (e.key === '4') {
                 window.location.href = 'snake.html';
+            } else if (e.key === '5') {
+                window.location.href = 'qiqi/index.html';
             }
         });
     </script>
