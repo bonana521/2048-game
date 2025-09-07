@@ -213,6 +213,34 @@
             box-shadow: 0 8px 25px rgba(0, 200, 81, 0.6);
         }
 
+        .game-qiqi .game-icon {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-qiqi .game-icon img {
+            transition: transform 0.3s ease;
+        }
+
+        .game-qiqi .game-card:hover .game-icon img {
+            transform: scale(1.1);
+        }
+
+        .game-qiqi .feature-tag {
+            background: rgba(255, 105, 180, 0.1);
+            color: #ff69b4;
+        }
+
+        .game-qiqi .play-btn {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+        }
+
+        .game-qiqi .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.6);
+        }
+
         .features {
             display: flex;
             justify-content: center;
@@ -427,6 +455,20 @@
             color: #1a1a2e;
         }
 
+        .night-mode .game-qiqi .play-btn {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+        }
+
+        .night-mode .special-thanks {
+            background: rgba(255, 215, 0, 0.1) !important;
+            border: 1px solid rgba(255, 215, 0, 0.2) !important;
+        }
+
+        .night-mode .special-thanks p {
+            color: rgba(255, 215, 0, 0.9) !important;
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -531,6 +573,21 @@
                 <span class="feature-tag">🎮 难度递增</span>
             </div>
         </div>
+
+        <div class="game-card game-qiqi">
+            <div class="game-icon qiqi-avatar">
+                <img src="https://bonana521.github.io/-AI-/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
+            </div>
+            <h2>琪琪AI助手 🐱</h2>
+            <p>可爱的兽娘AI助手！拥有智能对话、情感识别、上下文记忆能力，可以陪你聊天、提供帮助，还能视频通话哦～</p>
+            <a href="https://bonana521.github.io/-AI-/" class="play-btn" target="_blank">开始聊天</a>
+            <div class="features">
+                <span class="feature-tag">🧠 智能对话</span>
+                <span class="feature-tag">💕 情感识别</span>
+                <span class="feature-tag">📹 视频通话</span>
+                <span class="feature-tag">🎮 游戏陪伴</span>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -541,6 +598,15 @@
             <a href="gameoflife.html">生命游戏</a>
             <a href="ecosystem_v2.html">生态演化</a>
             <a href="snake.html">贪吃蛇游戏</a>
+            <a href="https://bonana521.github.io/-AI-/" target="_blank">琪琪AI助手</a>
+        </div>
+        
+        <!-- 特别感谢 -->
+        <div class="special-thanks" style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 15px; backdrop-filter: blur(10px);">
+            <p style="margin: 0 0 10px 0; font-size: 1rem; color: rgba(255, 255, 255, 0.9);">🌟 特别感谢</p>
+            <p style="margin: 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                感谢可爱喵喵在游戏创作过程中给予的宝贵建议和灵感支持，喵～ (｡･ω･｡)ﾉ♡
+            </p>
         </div>
     </div>
 
@@ -622,6 +688,8 @@
                 window.location.href = 'gameoflife.html';
             } else if (e.key === '4') {
                 window.location.href = 'snake.html';
+            } else if (e.key === '5') {
+                window.location.href = 'qiqi/index.html';
             }
         });
     </script>
