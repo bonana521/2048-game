@@ -733,6 +733,64 @@ class NyanChanEnhanced {
         if (waifu) {
             waifu.style.display = "none";
             this.showMessage("下次再见喵~ 我会想你的！", 2000);
+            this.createShowButton();
+        }
+    }
+    
+    createShowButton() {
+        // 移除已存在的显示按钮
+        const existingBtn = document.getElementById("waifu-show-btn");
+        if (existingBtn) {
+            existingBtn.remove();
+        }
+        
+        const showBtn = document.createElement("div");
+        showBtn.id = "waifu-show-btn";
+        showBtn.innerHTML = "🐱";
+        showBtn.title = "显示桌宠";
+        showBtn.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff6b9d, #ff8a80);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        `;
+        
+        showBtn.addEventListener("mouseenter", function() {
+            this.style.transform = "scale(1.1)";
+            this.style.boxShadow = "0 6px 20px rgba(255, 107, 157, 0.6)";
+        });
+        
+        showBtn.addEventListener("mouseleave", function() {
+            this.style.transform = "scale(1)";
+            this.style.boxShadow = "0 4px 15px rgba(255, 107, 157, 0.4)";
+        });
+        
+        showBtn.addEventListener("click", () => {
+            this.show();
+            showBtn.remove();
+        });
+        
+        document.body.appendChild(showBtn);
+    }
+    
+    show() {
+        const waifu = document.getElementById("nyan-chan-enhanced");
+        if (waifu) {
+            waifu.style.display = "block";
+            this.showMessage("我回来啦~ 好想喵！", 2000);
         }
     }
     
