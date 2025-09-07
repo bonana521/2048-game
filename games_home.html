@@ -215,6 +215,16 @@
 
         .game-qiqi .game-icon {
             background: linear-gradient(135deg, #ff69b4, #ff1493);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-qiqi .game-icon img {
+            transition: transform 0.3s ease;
+        }
+
+        .game-qiqi .game-card:hover .game-icon img {
+            transform: scale(1.1);
         }
 
         .game-qiqi .feature-tag {
@@ -556,7 +566,9 @@
         </div>
 
         <div class="game-card game-qiqi">
-            <div class="game-icon">🐱</div>
+            <div class="game-icon qiqi-avatar">
+                <img src="qiqi/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
+            </div>
             <h2>琪琪AI助手</h2>
             <p>可爱的兽娘AI助手！拥有智能对话、情感识别、上下文记忆能力，可以陪你聊天、提供帮助，还能视频通话哦～</p>
             <a href="qiqi/index.html" class="play-btn">开始聊天</a>
