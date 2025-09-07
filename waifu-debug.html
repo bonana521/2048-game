@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>桌宠调试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .debug-info {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007acc;
+        }
+        .error {
+            border-left-color: #dc3545;
+        }
+        .success {
+            border-left-color: #28a745;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007acc;
+            color: white;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐱 桌宠调试页面</h1>
+    
+    <div class="debug-info">
+        <h3>调试说明：</h3>
+        <p>1. 打开浏览器开发者工具（F12）查看控制台信息</p>
+        <p>2. 查看下方显示的调试信息</p>
+        <p>3. 点击按钮测试功能</p>
+    </div>
+    
+    <div id="debug-status" class="debug-info">
+        <h3>状态信息：</h3>
+        <div id="status-content">正在检查...</div>
+    </div>
+    
+    <div>
+        <button onclick="checkWaifuStatus()">检查桌宠状态</button>
+        <button onclick="forceInitWaifu()">强制初始化桌宠</button>
+        <button onclick="checkToolbar()">检查工具栏</button>
+        <button onclick="clearDebugInfo()">清除调试信息</button>
+    </div>
+    
+    <div id="debug-output"></div>
+
+    <!-- 8bit音乐库 -->
+    <script src="8bit-music.js"></script>
+    <!-- 增强版喵酱看板娘 -->
+    <script src="nyan-chan-enhanced.js"></script>
+    
+    <script>
+        function addDebugInfo(message, type = 'info') {
+            const debugOutput = document.getElementById('debug-output');
+            const div = document.createElement('div');
+            div.className = `debug-info ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            debugOutput.appendChild(div);
+            console.log(`[调试] ${message}`);
+        }
+        
+        function updateStatus(message) {
+            document.getElementById('status-content').innerHTML = message;
+        }
+        
+        function checkWaifuStatus() {
+            addDebugInfo('开始检查桌宠状态...');
+            
+            const waifu = document.getElementById('nyan-chan-enhanced');
+            if (waifu) {
+                addDebugInfo('✅ 找到桌宠元素', 'success');
+                addDebugInfo(`桌宠显示状态: ${waifu.style.display}`);
+                addDebugInfo(`桌宠位置: ${waifu.style.position}`);
+                
+                const container = waifu.querySelector('.waifu-container');
+                if (container) {
+                    addDebugInfo('✅ 找到桌宠容器', 'success');
+                } else {
+                    addDebugInfo('❌ 未找到桌宠容器', 'error');
+                }
+            } else {
+                addDebugInfo('❌ 未找到桌宠元素', 'error');
+            }
+            
+            // 检查nyanChanEnhanced对象
+            if (typeof nyanChanEnhanced !== 'undefined') {
+                addDebugInfo('✅ nyanChanEnhanced对象已定义', 'success');
+                addDebugInfo(`音乐播放状态: ${nyanChanEnhanced.musicPlaying}`);
+            } else {
+                addDebugInfo('❌ nyanChanEnhanced对象未定义', 'error');
+            }
+        }
+        
+        function forceInitWaifu() {
+            addDebugInfo('尝试强制初始化桌宠...');
+            try {
+                if (typeof nyanChanEnhanced === 'undefined') {
+                    addDebugInfo('创建新的nyanChanEnhanced实例...');
+                    window.nyanChanEnhanced = new NyanChanEnhanced();
+                } else {
+                    addDebugInfo('nyanChanEnhanced已存在，重新初始化...');
+                    nyanChanEnhanced.init();
+                }
+                addDebugInfo('✅ 强制初始化完成', 'success');
+            } catch (error) {
+                addDebugInfo(`❌ 初始化失败: ${error.message}`, 'error');
+            }
+        }
+        
+        function checkToolbar() {
+            addDebugInfo('检查工具栏状态...');
+            
+            const toolbar = document.querySelector('.waifu-toolbar');
+            if (toolbar) {
+                addDebugInfo('✅ 找到工具栏', 'success');
+                addDebugInfo(`工具栏HTML: ${toolbar.innerHTML}`);
+                
+                const buttons = toolbar.querySelectorAll('.toolbar-btn');
+                addDebugInfo(`找到 ${buttons.length} 个工具栏按钮`);
+                
+                buttons.forEach((btn, index) => {
+                    addDebugInfo(`按钮${index + 1}: ${btn.title} (${btn.textContent})`);
+                });
+            } else {
+                addDebugInfo('❌ 未找到工具栏', 'error');
+            }
+        }
+        
+        function clearDebugInfo() {
+            document.getElementById('debug-output').innerHTML = '';
+            updateStatus('调试信息已清除');
+        }
+        
+        // 页面加载后自动检查
+        document.addEventListener('DOMContentLoaded', function() {
+            addDebugInfo('页面加载完成');
+            setTimeout(() => {
+                checkWaifuStatus();
+                updateStatus('检查完成，查看上方调试信息');
+            }, 2000);
+        });
+        
+        // 监听控制台错误
+        window.addEventListener('error', function(e) {
+            addDebugInfo(`JavaScript错误: ${e.message} (${e.filename}:${e.lineno})`, 'error');
+        });
+    </script>
+</body>
+</html>

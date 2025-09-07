@@ -169,6 +169,7 @@ class NyanChanEnhanced {
     }
     
     init() {
+        console.log("开始初始化喵酱桌宠...");
         this.createWaifu();
         this.createToolbar();
         this.createMusicPlayer();
@@ -176,6 +177,7 @@ class NyanChanEnhanced {
         this.bindEvents();
         this.showWelcomeMessage();
         this.startIdleAnimation();
+        console.log("喵酱桌宠初始化完成");
     }
     
     createWaifu() {
@@ -422,7 +424,13 @@ class NyanChanEnhanced {
             <button class="toolbar-btn" title="隐藏" onclick="nyanChanEnhanced.hide()">❌</button>
         `;
         
-        document.querySelector("#nyan-chan-enhanced .waifu-container").appendChild(toolbar);
+        const container = document.querySelector("#nyan-chan-enhanced .waifu-container");
+        if (container) {
+            container.appendChild(toolbar);
+            console.log("工具栏创建成功");
+        } else {
+            console.error("找不到桌宠容器，无法添加工具栏");
+        }
     }
     
     createMusicPlayer() {
