@@ -338,28 +338,46 @@
             }
 
             .games-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 15px;
                 padding: 0 15px;
+                max-width: 100%;
             }
 
             .game-card {
-                padding: 25px;
+                padding: 20px;
+                min-height: auto;
             }
 
             .game-icon {
-                width: 100px;
-                height: 100px;
-                font-size: 2.5rem;
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
             }
 
             .game-card h2 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
+            }
+
+            .game-card p {
+                font-size: 0.9rem;
+                min-height: 60px;
+                margin-bottom: 15px;
             }
 
             .play-btn {
-                padding: 12px 30px;
-                font-size: 1rem;
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+            
+            .features {
+                gap: 8px;
+                margin-top: 10px;
+            }
+            
+            .feature-tag {
+                font-size: 0.7rem;
+                padding: 3px 8px;
             }
         }
 
@@ -369,20 +387,76 @@
             }
 
             .games-container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 12px;
                 padding: 0 10px;
+                max-width: 100%;
             }
 
             .game-card {
-                padding: 20px;
+                padding: 15px;
+                min-height: auto;
+            }
+
+            .game-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+
+            .game-card h2 {
+                font-size: 1.3rem;
+            }
+
+            .game-card p {
+                font-size: 0.8rem;
+                min-height: 50px;
+                margin-bottom: 12px;
+                line-height: 1.4;
+            }
+
+            .play-btn {
+                padding: 8px 20px;
+                font-size: 0.8rem;
             }
 
             .features {
-                gap: 10px;
+                gap: 6px;
+                margin-top: 8px;
             }
 
             .feature-tag {
-                font-size: 0.7rem;
-                padding: 4px 10px;
+                font-size: 0.6rem;
+                padding: 2px 6px;
+            }
+        }
+        
+        /* 超小屏幕进一步优化 */
+        @media (max-width: 320px) {
+            .games-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 0 8px;
+            }
+            
+            .game-card {
+                padding: 12px;
+            }
+            
+            .game-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .game-card h2 {
+                font-size: 1.2rem;
+            }
+            
+            .game-card p {
+                font-size: 0.8rem;
+                min-height: 40px;
+                margin-bottom: 10px;
             }
         }
 
@@ -699,5 +773,28 @@
     <script src="8bit-music.js"></script>
     <!-- 增强版喵酱看板娘 -->
     <script src="nyan-chan-enhanced.js"></script>
+    
+    <script>
+        // 页面加载完成后自动播放音乐
+        function autoPlayMusic() {
+            if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.toggleMusic) {
+                // 自动开启音乐
+                if (!nyanChanEnhanced.musicPlaying) {
+                    nyanChanEnhanced.toggleMusic();
+                }
+            } else {
+                // 如果还没有初始化，继续等待
+                setTimeout(autoPlayMusic, 500);
+            }
+        }
+        
+        // 监听页面加载完成事件
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', autoPlayMusic);
+        } else {
+            // 页面已经加载完成，直接执行
+            setTimeout(autoPlayMusic, 1000);
+        }
+    </script>
 </body>
 </html>

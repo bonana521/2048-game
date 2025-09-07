@@ -696,5 +696,20 @@
     <!-- 8bit音乐库 -->
     <script src="8bit-music.js"></script>
     <script src="nyan-chan-enhanced.js"></script>
+    
+    <script>
+        // 页面加载完成后自动播放音乐
+        document.addEventListener('DOMContentLoaded', function() {
+            // 延迟一点确保音乐系统初始化完成
+            setTimeout(() => {
+                if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.toggleMusic) {
+                    // 自动开启音乐
+                    if (!nyanChanEnhanced.musicPlaying) {
+                        nyanChanEnhanced.toggleMusic();
+                    }
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
