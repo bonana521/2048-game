@@ -335,9 +335,9 @@ class NyanChanEnhanced {
                 color: white;
                 border: none;
                 border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 backdrop-filter: blur(5px);
@@ -414,12 +414,7 @@ class NyanChanEnhanced {
         const toolbar = document.createElement("div");
         toolbar.className = "waifu-toolbar";
         toolbar.innerHTML = `
-            <button class="toolbar-btn" title="主页" onclick="nyanChanEnhanced.goHome()">🏠</button>
             <button class="toolbar-btn" title="对话" onclick="nyanChanEnhanced.startConversation()">💬</button>
-            <button class="toolbar-btn" title="推荐游戏" onclick="nyanChanEnhanced.recommendGame()">🎮</button>
-            <button class="toolbar-btn" title="换背景" onclick="nyanChanEnhanced.changeBackground()">🎨</button>
-            <button class="toolbar-btn" title="换装" onclick="nyanChanEnhanced.changeOutfit()">👗</button>
-            <button class="toolbar-btn" title="夜间模式" onclick="nyanChanEnhanced.toggleNightMode()">🌙</button>
             <button class="toolbar-btn" title="音乐" onclick="nyanChanEnhanced.toggleMusic()">🎵</button>
             <button class="toolbar-btn" title="隐藏" onclick="nyanChanEnhanced.hide()">❌</button>
         `;
