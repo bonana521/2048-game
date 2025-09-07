@@ -775,26 +775,40 @@
     <script src="nyan-chan-enhanced.js"></script>
     
     <script>
-        // 页面加载完成后自动播放音乐
-        function autoPlayMusic() {
-            if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.toggleMusic) {
-                // 自动开启音乐
-                if (!nyanChanEnhanced.musicPlaying) {
-                    nyanChanEnhanced.toggleMusic();
-                }
+        // 页面加载完成后显示音乐提示
+        function showMusicHint() {
+            if (typeof nyanChanEnhanced !== 'undefined') {
+                // 延迟显示音乐提示
+                setTimeout(() => {
+                    if (!nyanChanEnhanced.musicPlaying) {
+                        nyanChanEnhanced.showMessage("🎵 想听音乐吗？点击右下角我的音乐按钮吧！", 4000);
+                    }
+                }, 2000);
             } else {
                 // 如果还没有初始化，继续等待
-                setTimeout(autoPlayMusic, 500);
+                setTimeout(showMusicHint, 500);
             }
         }
         
         // 监听页面加载完成事件
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', autoPlayMusic);
+            document.addEventListener('DOMContentLoaded', showMusicHint);
         } else {
             // 页面已经加载完成，直接执行
-            setTimeout(autoPlayMusic, 1000);
+            setTimeout(showMusicHint, 1000);
         }
+        
+        // 添加点击页面任意位置启动音乐的辅助功能
+        document.addEventListener('click', function initAudioOnInteraction() {
+            if (typeof nyanChanEnhanced !== 'undefined' && !nyanChanEnhanced.musicPlaying) {
+                // 尝试初始化音频上下文（如果还没有初始化）
+                if (nyanChanEnhanced.audioContext && nyanChanEnhanced.audioContext.state === 'suspended') {
+                    nyanChanEnhanced.audioContext.resume();
+                }
+            }
+            // 只执行一次
+            document.removeEventListener('click', initAudioOnInteraction);
+        }, { once: true });
     </script>
 </body>
 </html>

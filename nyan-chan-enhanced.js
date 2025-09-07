@@ -431,12 +431,49 @@ class NyanChanEnhanced {
             this.bit8Music = bit8Music;
         } else {
             // 备用简单音乐系统
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            this.currentOscillator = null;
-            this.gainNode = this.audioContext.createGain();
-            this.gainNode.connect(this.audioContext.destination);
-            this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+            try {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.currentOscillator = null;
+                this.gainNode = this.audioContext.createGain();
+                this.gainNode.connect(this.audioContext.destination);
+                this.gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                
+                // 监听用户交互来恢复音频上下文
+                this.setupAudioContextResume();
+            } catch (e) {
+                console.log('音频上下文创建失败:', e);
+                this.audioContext = null;
+            }
         }
+    }
+    
+    setupAudioContextResume() {
+        // 监听用户交互事件来恢复音频上下文
+        const resumeOnInteraction = async () => {
+            if (this.audioContext && this.audioContext.state === 'suspended') {
+                try {
+                    await this.audioContext.resume();
+                    console.log('音频上下文已恢复');
+                } catch (e) {
+                    console.log('音频上下文恢复失败:', e);
+                }
+            }
+            if (this.bit8Music && this.bit8Music.audioContext && 
+                this.bit8Music.audioContext.state === 'suspended') {
+                try {
+                    await this.bit8Music.audioContext.resume();
+                    console.log('bit8Music 音频上下文已恢复');
+                } catch (e) {
+                    console.log('bit8Music 音频上下文恢复失败:', e);
+                }
+            }
+        };
+        
+        // 监听多种用户交互事件
+        const events = ['click', 'touchstart', 'keydown'];
+        events.forEach(event => {
+            document.addEventListener(event, resumeOnInteraction, { once: true });
+        });
     }
     
     async play8BitMusic() {
@@ -661,15 +698,29 @@ class NyanChanEnhanced {
         this.showMessage(message);
     }
     
-    toggleMusic() {
+    async toggleMusic() {
         if (this.musicPlaying) {
             this.stopMusic();
             this.musicPlaying = false;
             this.showMessage("音乐暂停了喵~ 需要的时候再打开哦！");
         } else {
-            this.play8BitMusic();
-            this.musicPlaying = true;
-            this.showMessage("开始播放8bit音乐喵~ 享受游戏时光吧！");
+            try {
+                // 恢复音频上下文 - 处理浏览器自动播放策略
+                if (this.audioContext && this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+                if (this.bit8Music && this.bit8Music.audioContext && 
+                    this.bit8Music.audioContext.state === 'suspended') {
+                    await this.bit8Music.audioContext.resume();
+                }
+                
+                await this.play8BitMusic();
+                this.musicPlaying = true;
+                this.showMessage("开始播放8bit音乐喵~ 享受游戏时光吧！");
+            } catch (error) {
+                console.error('音乐播放失败:', error);
+                this.showMessage("喵~ 音乐播放失败了，点击游戏区域试试看！");
+            }
         }
     }
     

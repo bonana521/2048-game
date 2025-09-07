@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048游戏 - 音乐功能修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+        }
+        .game-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .game-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-good { background: #4CAF50; }
+        .status-warning { background: #ff9800; }
+        .status-error { background: #f44336; }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .test-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .test-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .log-area {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 2048游戏音乐功能修复测试</h1>
+    
+    <div class="container">
+        <h2>🎮 游戏链接</h2>
+        <a href="2048.html" class="game-link">打开2048游戏</a>
+        <a href="music-debug.html" class="game-link">音乐调试工具</a>
+    </div>
+    
+    <div class="container">
+        <h2>🔧 修复内容</h2>
+        <div class="info-box">
+            <h3>✅ 已修复的问题</h3>
+            <ul>
+                <li><span class="status-indicator status-good"></span>浏览器自动播放策略限制</li>
+                <li><span class="status-indicator status-good"></span>AudioContext 初始化时序问题</li>
+                <li><span class="status-indicator status-good"></span>音乐系统错误处理</li>
+                <li><span class="status-indicator status-good"></span>用户交互检测机制</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h3>🔧 技术改进</h3>
+            <ul>
+                <li>添加了音频上下文自动恢复机制</li>
+                <li>改进了错误处理和用户反馈</li>
+                <li>优化了音乐播放的异步处理</li>
+                <li>增加了用户交互事件监听</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>🧪 测试功能</h2>
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testMusicSystem()">测试音乐系统</button>
+            <button class="test-btn" onclick="testAudioContext()">测试音频上下文</button>
+            <button class="test-btn" onclick="testUserInteraction()">测试用户交互</button>
+            <button class="test-btn" onclick="clearLog()">清空日志</button>
+        </div>
+        
+        <div id="test-log" class="log-area">测试日志将显示在这里...</div>
+    </div>
+    
+    <div class="container">
+        <h2>📋 使用说明</h2>
+        <ol>
+            <li>点击"打开2048游戏"链接进入游戏</li>
+            <li>游戏加载后，右下角会出现喵酱看板娘</li>
+            <li>点击喵酱的音乐按钮（🎵）来播放/暂停音乐</li>
+            <li>如果音乐无法播放，尝试点击游戏区域或按任意键</li>
+            <li>查看控制台日志了解详细信息</li>
+        </ol>
+        
+        <div class="info-box">
+            <h3>💡 提示</h3>
+            <p>现代浏览器需要用户交互才能播放音频，这是为了防止网站自动播放音频打扰用户。</p>
+            <p>如果音乐无法播放，请确保：</p>
+            <ul>
+                <li>浏览器允许该网站播放音频</li>
+                <li>已经与页面进行了交互（点击、按键等）</li>
+                <li>音频设备正常工作</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 引入音乐系统用于测试 -->
+    <script src="8bit-music.js"></script>
+    <script src="nyan-chan-enhanced.js"></script>
+    
+    <script>
+        let testLog = '';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            testLog += logEntry;
+            console.log(logEntry);
+            updateLog();
+        }
+        
+        function updateLog() {
+            const logElement = document.getElementById('test-log');
+            if (logElement) {
+                logElement.textContent = testLog;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+        
+        function clearLog() {
+            testLog = '';
+            updateLog();
+        }
+        
+        function testMusicSystem() {
+            log('开始测试音乐系统...');
+            
+            // 检查 bit8Music
+            if (window.bit8Music) {
+                log('✅ bit8Music 已加载');
+                log(`   音量: ${window.bit8Music.volume}`);
+                log(`   正在播放: ${window.bit8Music.isPlaying}`);
+                log(`   当前曲目: ${window.bit8Music.currentTrack || '无'}`);
+                log(`   音频上下文状态: ${window.bit8Music.audioContext?.state || '未创建'}`);
+            } else {
+                log('❌ bit8Music 未加载', 'error');
+            }
+            
+            // 检查 nyanChanEnhanced
+            if (window.nyanChanEnhanced) {
+                log('✅ nyanChanEnhanced 已加载');
+                log(`   音乐播放状态: ${window.nyanChanEnhanced.musicPlaying}`);
+                log(`   bit8Music 可用: ${!!window.nyanChanEnhanced.bit8Music}`);
+                log(`   audioContext 可用: ${!!window.nyanChanEnhanced.audioContext}`);
+                log(`   音频上下文状态: ${window.nyanChanEnhanced.audioContext?.state || '未创建'}`);
+            } else {
+                log('❌ nyanChanEnhanced 未加载', 'error');
+            }
+        }
+        
+        function testAudioContext() {
+            log('开始测试音频上下文...');
+            
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) {
+                    log('❌ AudioContext 不支持', 'error');
+                    return;
+                }
+                
+                log('✅ AudioContext 支持正常');
+                
+                // 测试 bit8Music 音频上下文
+                if (window.bit8Music && window.bit8Music.audioContext) {
+                    const state = window.bit8Music.audioContext.state;
+                    log(`bit8Music 音频上下文状态: ${state}`);
+                    
+                    if (state === 'suspended') {
+                        log('⚠️  bit8Music 音频上下文被暂停，需要用户交互', 'warning');
+                    } else if (state === 'running') {
+                        log('✅ bit8Music 音频上下文正在运行');
+                    }
+                }
+                
+                // 测试 nyanChanEnhanced 音频上下文
+                if (window.nyanChanEnhanced && window.nyanChanEnhanced.audioContext) {
+                    const state = window.nyanChanEnhanced.audioContext.state;
+                    log(`nyanChanEnhanced 音频上下文状态: ${state}`);
+                    
+                    if (state === 'suspended') {
+                        log('⚠️  nyanChanEnhanced 音频上下文被暂停，需要用户交互', 'warning');
+                    } else if (state === 'running') {
+                        log('✅ nyanChanEnhanced 音频上下文正在运行');
+                    }
+                }
+                
+            } catch (error) {
+                log(`❌ 音频上下文测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testUserInteraction() {
+            log('开始测试用户交互...');
+            
+            // 创建测试按钮
+            const button = document.createElement('button');
+            button.textContent = '点击此处测试用户交互';
+            button.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 20px;
+                font-size: 16px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                z-index: 10000;
+            `;
+            
+            button.onclick = async () => {
+                try {
+                    log('✅ 用户交互检测成功');
+                    
+                    // 测试音频上下文恢复
+                    if (window.bit8Music && window.bit8Music.audioContext) {
+                        const beforeState = window.bit8Music.audioContext.state;
+                        if (beforeState === 'suspended') {
+                            await window.bit8Music.audioContext.resume();
+                            const afterState = window.bit8Music.audioContext.state;
+                            log(`bit8Music 音频上下文: ${beforeState} → ${afterState}`);
+                        }
+                    }
+                    
+                    if (window.nyanChanEnhanced && window.nyanChanEnhanced.audioContext) {
+                        const beforeState = window.nyanChanEnhanced.audioContext.state;
+                        if (beforeState === 'suspended') {
+                            await window.nyanChanEnhanced.audioContext.resume();
+                            const afterState = window.nyanChanEnhanced.audioContext.state;
+                            log(`nyanChanEnhanced 音频上下文: ${beforeState} → ${afterState}`);
+                        }
+                    }
+                    
+                    // 移除测试按钮
+                    document.body.removeChild(button);
+                    
+                } catch (error) {
+                    log(`❌ 用户交互测试失败: ${error.message}`, 'error');
+                }
+            };
+            
+            document.body.appendChild(button);
+            log('👆 请点击页面中央的测试按钮');
+        }
+        
+        // 页面加载完成后自动测试
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                log('🎵 音乐功能修复测试页面已加载');
+                testMusicSystem();
+                testAudioContext();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐功能调试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>音乐功能调试页面</h1>
+        
+        <div class="test-section">
+            <h2>1. 音频上下文状态测试</h2>
+            <button onclick="testAudioContext()">测试音频上下文</button>
+            <button onclick="resumeAudioContext()">恢复音频上下文</button>
+            <div id="audio-context-status" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>2. 音乐系统测试</h2>
+            <button onclick="testMusicSystem()">测试音乐系统</button>
+            <button onclick="playTestMusic()">播放测试音乐</button>
+            <button onclick="stopTestMusic()">停止测试音乐</button>
+            <div id="music-system-status" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>3. 浏览器自动播放策略测试</h2>
+            <button onclick="testAutoplayPolicy()">测试自动播放策略</button>
+            <button onclick="requestUserInteraction()">请求用户交互</button>
+            <div id="autoplay-status" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>4. 喵酱系统测试</h2>
+            <button onclick="testNyanChan()">测试喵酱系统</button>
+            <button onclick="toggleNyanChanMusic()">切换喵酱音乐</button>
+            <div id="nyan-chan-status" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 引入音乐系统 -->
+    <script src="8bit-music.js"></script>
+    <script src="nyan-chan-enhanced.js"></script>
+    
+    <script>
+        let testLog = '';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            testLog += logEntry;
+            console.log(logEntry);
+            return logEntry;
+        }
+        
+        function updateLog(elementId, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = testLog + message;
+            }
+        }
+        
+        function testAudioContext() {
+            testLog = '';
+            let status = log('开始测试音频上下文...');
+            
+            try {
+                // 测试AudioContext是否可用
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) {
+                    status += log('AudioContext 不支持', 'error');
+                    updateLog('audio-context-status', status);
+                    return;
+                }
+                
+                // 创建测试音频上下文
+                const testAudioContext = new AudioContext();
+                status += log(`AudioContext 创建成功，状态: ${testAudioContext.state}`);
+                
+                // 测试不同状态
+                if (testAudioContext.state === 'suspended') {
+                    status += log('AudioContext 处于暂停状态，需要用户交互来恢复', 'warn');
+                } else if (testAudioContext.state === 'running') {
+                    status += log('AudioContext 正在运行');
+                }
+                
+                // 测试音频节点创建
+                const oscillator = testAudioContext.createOscillator();
+                const gainNode = testAudioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(testAudioContext.destination);
+                
+                status += log('音频节点创建成功');
+                
+                // 清理
+                oscillator.disconnect();
+                gainNode.disconnect();
+                testAudioContext.close();
+                
+                status += log('音频上下文测试完成');
+                
+            } catch (error) {
+                status += log(`音频上下文测试失败: ${error.message}`, 'error');
+            }
+            
+            updateLog('audio-context-status', status);
+        }
+        
+        async function resumeAudioContext() {
+            testLog = '';
+            let status = log('尝试恢复音频上下文...');
+            
+            try {
+                // 测试全局音乐系统
+                if (window.bit8Music && window.bit8Music.audioContext) {
+                    status += log(`找到 bit8Music，状态: ${window.bit8Music.audioContext.state}`);
+                    
+                    if (window.bit8Music.audioContext.state === 'suspended') {
+                        await window.bit8Music.audioContext.resume();
+                        status += log(`bit8Music 音频上下文已恢复，状态: ${window.bit8Music.audioContext.state}`);
+                    }
+                }
+                
+                // 测试喵酱音乐系统
+                if (window.nyanChanEnhanced && window.nyanChanEnhanced.audioContext) {
+                    status += log(`找到 nyanChanEnhanced，状态: ${window.nyanChanEnhanced.audioContext.state}`);
+                    
+                    if (window.nyanChanEnhanced.audioContext.state === 'suspended') {
+                        await window.nyanChanEnhanced.audioContext.resume();
+                        status += log(`nyanChanEnhanced 音频上下文已恢复，状态: ${window.nyanChanEnhanced.audioContext.state}`);
+                    }
+                }
+                
+            } catch (error) {
+                status += log(`恢复音频上下文失败: ${error.message}`, 'error');
+            }
+            
+            updateLog('audio-context-status', status);
+        }
+        
+        function testMusicSystem() {
+            testLog = '';
+            let status = log('开始测试音乐系统...');
+            
+            // 检查 bit8Music
+            if (window.bit8Music) {
+                status += log('bit8Music 已加载');
+                status += log(`音量: ${window.bit8Music.volume}`);
+                status += log(`正在播放: ${window.bit8Music.isPlaying}`);
+                status += log(`当前曲目: ${window.bit8Music.currentTrack}`);
+                status += log(`可用曲目: ${Object.keys(window.bit8Music.tracks).join(', ')}`);
+            } else {
+                status += log('bit8Music 未加载', 'error');
+            }
+            
+            // 检查 nyanChanEnhanced
+            if (window.nyanChanEnhanced) {
+                status += log('nyanChanEnhanced 已加载');
+                status += log(`音乐播放状态: ${window.nyanChanEnhanced.musicPlaying}`);
+                status += log(`是否有 bit8Music: ${!!window.nyanChanEnhanced.bit8Music}`);
+                status += log(`是否有 audioContext: ${!!window.nyanChanEnhanced.audioContext}`);
+            } else {
+                status += log('nyanChanEnhanced 未加载', 'error');
+            }
+            
+            updateLog('music-system-status', status);
+        }
+        
+        async function playTestMusic() {
+            testLog = '';
+            let status = log('开始播放测试音乐...');
+            
+            try {
+                if (window.bit8Music) {
+                    status += log('使用 bit8Music 播放...');
+                    await window.bit8Music.playTrack('morning', true);
+                    status += log('bit8Music 播放成功');
+                } else {
+                    status += log('bit8Music 不可用', 'error');
+                }
+            } catch (error) {
+                status += log(`播放失败: ${error.message}`, 'error');
+            }
+            
+            updateLog('music-system-status', status);
+        }
+        
+        function stopTestMusic() {
+            testLog = '';
+            let status = log('停止测试音乐...');
+            
+            if (window.bit8Music) {
+                window.bit8Music.stopTrack();
+                status += log('bit8Music 已停止');
+            }
+            
+            if (window.nyanChanEnhanced) {
+                window.nyanChanEnhanced.stopMusic();
+                window.nyanChanEnhanced.musicPlaying = false;
+                status += log('nyanChanEnhanced 音乐已停止');
+            }
+            
+            updateLog('music-system-status', status);
+        }
+        
+        function testAutoplayPolicy() {
+            testLog = '';
+            let status = log('测试自动播放策略...');
+            
+            // 检查用户交互状态
+            const userInteracted = document.userInteraction || false;
+            status += log(`用户交互状态: ${userInteracted}`);
+            
+            // 检查文档状态
+            status += log(`文档就绪状态: ${document.readyState}`);
+            
+            // 检查是否有焦点
+            status += log(`文档是否有焦点: ${document.hasFocus()}`);
+            
+            // 测试自动播放限制
+            const testVideo = document.createElement('video');
+            testVideo.muted = true;
+            testVideo.autoplay = true;
+            testVideo.src = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAs1tZGF0AAACrgYF//+q3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0OCByMjYwMyBhMGNkN2QzIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD0tMiB0aHJlYWRzPTEgbG9va2FoZWFkX3RocmVhZHM9MSBzbGljZWRfdGhyZWFkcz0wIG5yPTAgZGVjaW1hdGU9MSBpbnRlcmxhY2VkPTAgYmx1cmF5X2NvbXBhdD0wIGNvbnN0cmFpbmVkX2ludHJhPTAgYmZyYW1lcz0zIGJfcHlyYW1pZD0yIGJfYWRhcHQ9MSBiX2JpYXM9MCBkaXJlY3Q9MSB3ZWlnaHRiPTEgb3Blbl9nb3A9MCB3ZWlnaHRwPTIga2V5aW50PTI1MCBrZXlpbnRfbWluPTEwIHNjZW5lY3V0PTQwIGludHJhX3JlZnJlc2g9MCByY19sb29rYWhlYWQ9NDAgcmM9Y3JmIG1idHJlZT0xIGNyZj0yMy4wIHFjb21wPTAuNjAgcXBtaW49MCBxcG1heD02OSBxcHN0ZXA9NCBpcF9yYXRpbz0xLjQwIGFxPTE6MS4wMACAAAAAD2WIhAA3//728P4FNjuZQQAAAu5tb292AAAAbG12aGQAAAAAAAAAAAAAAAAAAAPoAAAAZAABAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACGHRyYWsAAABcdGtoZAAAAAMAAAAAAAAAAAAAAAEAAAAAAAAAZAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAEAAAAAAAgAAAAIAAAAAACRlZHRzAAAAHGVsc3QAAAAAAAAAAQAAAGQAAAAAAAEAAAAAAZBtZGlhAAAAIG1kaGQAAAAAAAAAAAAAAAAAACgAAAAEAFXEAAAAAAAtaGRscgAAAAAAAAAAdmlkZQAAAAAAAAAAAAAAAFZpZGVvSGFuZGxlcgAAAAE7bWluZgAAABR2bWhkAAAAAQAAAAAAAAAAAAAAJGRpbmYAAAAcZHJlZgAAAAAAAAABAAAADHVybCAAAAABAAAA+3N0YmwAAACXc3RzZAAAAAAAAAABAAAAh2F2YzEAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAgACAEgAAABIAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY//8AAAAxYXZjQwFkAAr/4QAYZ2QACqzZX4iIhAAAAwAEAAADAFA8SJZYAQAGaOvjyyLAAAAAGHN0dHMAAAAAAAAAAQAAAAEAAAQAAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAABAAAAAQAAABRzdHN6AAAAAAAAAsUAAAABAAAAFHN0Y28AAAAAAAAAAQAAADAAAABidWR0YQAAAFptZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAAC1pbHN0AAAAJal0b28AAAAdZGF0YQAAAAEAAAAATGF2ZjU2LjQwLjEwMQ==';
+            
+            document.body.appendChild(testVideo);
+            
+            setTimeout(() => {
+                const canAutoplay = !testVideo.paused;
+                status += log(`静音自动播放测试: ${canAutoplay ? '成功' : '失败'}`);
+                document.body.removeChild(testVideo);
+            }, 1000);
+            
+            updateLog('autoplay-status', status);
+        }
+        
+        function requestUserInteraction() {
+            testLog = '';
+            let status = log('请求用户交互...');
+            
+            // 创建一个按钮来请求用户交互
+            const button = document.createElement('button');
+            button.textContent = '点击此处启用音频';
+            button.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 20px;
+                font-size: 18px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                z-index: 10000;
+            `;
+            
+            button.onclick = async () => {
+                try {
+                    // 标记用户已交互
+                    document.userInteraction = true;
+                    status += log('用户已交互');
+                    
+                    // 尝试恢复音频上下文
+                    if (window.bit8Music && window.bit8Music.audioContext) {
+                        await window.bit8Music.audioContext.resume();
+                        status += log('bit8Music 音频上下文已恢复');
+                    }
+                    
+                    if (window.nyanChanEnhanced && window.nyanChanEnhanced.audioContext) {
+                        await window.nyanChanEnhanced.audioContext.resume();
+                        status += log('nyanChanEnhanced 音频上下文已恢复');
+                    }
+                    
+                    // 移除按钮
+                    document.body.removeChild(button);
+                    
+                } catch (error) {
+                    status += log(`用户交互处理失败: ${error.message}`, 'error');
+                }
+                
+                updateLog('autoplay-status', status);
+            };
+            
+            document.body.appendChild(button);
+            updateLog('autoplay-status', status);
+        }
+        
+        function testNyanChan() {
+            testLog = '';
+            let status = log('测试喵酱系统...');
+            
+            if (window.nyanChanEnhanced) {
+                status += log('nyanChanEnhanced 已加载');
+                status += log(`音乐播放状态: ${window.nyanChanEnhanced.musicPlaying}`);
+                status += log(`当前表情: ${window.nyanChanEnhanced.currentExpression}`);
+                status += log(`夜间模式: ${window.nyanChanEnhanced.isNightMode}`);
+                
+                // 检查音乐相关属性
+                status += log(`bit8Music 可用: ${!!window.nyanChanEnhanced.bit8Music}`);
+                status += log(`audioContext 可用: ${!!window.nyanChanEnhanced.audioContext}`);
+                status += log(`currentOscillator: ${!!window.nyanChanEnhanced.currentOscillator}`);
+                
+            } else {
+                status += log('nyanChanEnhanced 未加载', 'error');
+            }
+            
+            updateLog('nyan-chan-status', status);
+        }
+        
+        function toggleNyanChanMusic() {
+            testLog = '';
+            let status = log('切换喵酱音乐...');
+            
+            if (window.nyanChanEnhanced) {
+                try {
+                    window.nyanChanEnhanced.toggleMusic();
+                    status += log('音乐切换完成');
+                    status += log(`新的音乐状态: ${window.nyanChanEnhanced.musicPlaying}`);
+                } catch (error) {
+                    status += log(`音乐切换失败: ${error.message}`, 'error');
+                }
+            } else {
+                status += log('nyanChanEnhanced 未加载', 'error');
+            }
+            
+            updateLog('nyan-chan-status', status);
+        }
+        
+        // 页面加载完成后自动测试
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                testAudioContext();
+                testMusicSystem();
+                testAutoplayPolicy();
+                testNyanChan();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

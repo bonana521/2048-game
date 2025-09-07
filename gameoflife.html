@@ -716,18 +716,23 @@
     <script src="nyan-chan-enhanced.js"></script>
     
     <script>
-        // 页面加载完成后自动播放音乐
+        // 页面加载完成后显示音乐提示
         document.addEventListener('DOMContentLoaded', function() {
-            // 延迟一点确保音乐系统初始化完成
+            // 延迟显示音乐提示
             setTimeout(() => {
-                if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.toggleMusic) {
-                    // 自动开启音乐
-                    if (!nyanChanEnhanced.musicPlaying) {
-                        nyanChanEnhanced.toggleMusic();
-                    }
+                if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.showMessage) {
+                    nyanChanEnhanced.showMessage("🎵 生命游戏！点击音乐按钮享受治愈音乐！", 3000);
                 }
-            }, 1000);
+            }, 1500);
         });
+        
+        // 添加点击事件监听帮助恢复音频上下文
+        document.addEventListener('click', function initAudioOnInteraction() {
+            if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.audioContext && nyanChanEnhanced.audioContext.state === 'suspended') {
+                nyanChanEnhanced.audioContext.resume();
+            }
+            document.removeEventListener('click', initAudioOnInteraction);
+        }, { once: true });
     </script>
 </body>
 </html>

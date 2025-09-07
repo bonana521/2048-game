@@ -551,17 +551,23 @@
     <script src="nyan-chan-enhanced.js"></script>
     
     <script>
-        // 页面加载完成后自动播放音乐
+        // 页面加载完成后提示用户音乐功能
         document.addEventListener('DOMContentLoaded', function() {
             // 延迟一点确保音乐系统初始化完成
             setTimeout(() => {
-                if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.toggleMusic) {
-                    // 自动开启音乐
-                    if (!nyanChanEnhanced.musicPlaying) {
-                        nyanChanEnhanced.toggleMusic();
-                    }
+                if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.showMessage) {
+                    nyanChanEnhanced.showMessage("欢迎来到2048游戏喵~ 点击右下角的音乐按钮开始播放音乐吧！");
                 }
-            }, 1000);
+            }, 2000);
+        });
+        
+        // 监听游戏键盘事件，帮助恢复音频上下文
+        document.addEventListener('keydown', function(e) {
+            if (typeof nyanChanEnhanced !== 'undefined' && nyanChanEnhanced.audioContext) {
+                if (nyanChanEnhanced.audioContext.state === 'suspended') {
+                    nyanChanEnhanced.audioContext.resume();
+                }
+            }
         });
     </script>
 </body>
