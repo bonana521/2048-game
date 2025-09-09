@@ -241,6 +241,24 @@
             box-shadow: 0 8px 25px rgba(255, 105, 180, 0.6);
         }
 
+        .game-tetris .game-icon {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+        }
+
+        .game-tetris .feature-tag {
+            background: rgba(255, 107, 107, 0.1);
+            color: #FF6B6B;
+        }
+
+        .game-tetris .play-btn {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .game-tetris .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
         .features {
             display: flex;
             justify-content: center;
@@ -534,6 +552,11 @@
             color: white;
         }
 
+        .night-mode .game-tetris .play-btn {
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+        }
+
         .night-mode .special-thanks {
             background: rgba(255, 215, 0, 0.1) !important;
             border: 1px solid rgba(255, 215, 0, 0.2) !important;
@@ -563,6 +586,14 @@
 
         .game-card:nth-child(4) {
             animation-delay: 0.8s;
+        }
+
+        .game-card:nth-child(5) {
+            animation-delay: 1.0s;
+        }
+
+        .game-card:nth-child(6) {
+            animation-delay: 1.2s;
         }
 
         @keyframes slideInUp {
@@ -648,6 +679,19 @@
             </div>
         </div>
 
+        <div class="game-card game-tetris">
+            <div class="game-icon">🧩</div>
+            <h2>俄罗斯方块</h2>
+            <p>经典方块消除游戏！旋转、移动方块，填满整行消除，挑战更高分数。支持键盘和触摸控制，多平台完美适配。</p>
+            <a href="https://bonana521.github.io/Tetris/" class="play-btn" target="_blank">开始游戏</a>
+            <div class="features">
+                <span class="feature-tag">🎮 经典玩法</span>
+                <span class="feature-tag">⌨️ 键盘控制</span>
+                <span class="feature-tag">📱 触摸支持</span>
+                <span class="feature-tag">📊 分数记录</span>
+            </div>
+        </div>
+
         <div class="game-card game-qiqi">
             <div class="game-icon qiqi-avatar">
                 <img src="https://bonana521.github.io/-AI-/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
@@ -672,6 +716,7 @@
             <a href="gameoflife.html">生命游戏</a>
             <a href="ecosystem_v2.html">生态演化</a>
             <a href="snake.html">贪吃蛇游戏</a>
+            <a href="https://bonana521.github.io/Tetris/" target="_blank">俄罗斯方块</a>
             <a href="https://bonana521.github.io/-AI-/" target="_blank">琪琪AI助手</a>
         </div>
         
@@ -763,6 +808,8 @@
             } else if (e.key === '4') {
                 window.location.href = 'snake.html';
             } else if (e.key === '5') {
+                window.open('https://bonana521.github.io/Tetris/', '_blank');
+            } else if (e.key === '6') {
                 window.location.href = 'qiqi/index.html';
             }
         });
