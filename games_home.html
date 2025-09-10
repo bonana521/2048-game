@@ -259,6 +259,36 @@
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
         }
 
+        .game-bubble .game-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-bubble .game-icon::before {
+            content: '🎯';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            z-index: 1;
+        }
+
+        .game-bubble .feature-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .game-bubble .play-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .game-bubble .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
 
         .features {
             display: flex;
@@ -558,6 +588,11 @@
             color: white;
         }
 
+        .night-mode .game-bubble .play-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            color: white;
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -586,6 +621,10 @@
 
         .game-card:nth-child(6) {
             animation-delay: 1.2s;
+        }
+
+        .game-card:nth-child(7) {
+            animation-delay: 1.4s;
         }
 
         @keyframes slideInUp {
@@ -684,6 +723,19 @@
             </div>
         </div>
 
+        <div class="game-card game-bubble">
+            <div class="game-icon"></div>
+            <h2>泡泡射击</h2>
+            <p>精美的泡泡射击游戏！发射泡泡匹配相同颜色，清除所有泡泡完成关卡，现代化UI设计和完整中文界面。</p>
+            <a href="https://bonana521.github.io/bubble-shooter-game/" class="play-btn" target="_blank">开始游戏</a>
+            <div class="features">
+                <span class="feature-tag">🎯 瞄准射击</span>
+                <span class="feature-tag">🇨🇳 中文界面</span>
+                <span class="feature-tag">🎨 现代UI</span>
+                <span class="feature-tag">📱 响应式</span>
+            </div>
+        </div>
+
         <div class="game-card game-qiqi">
             <div class="game-icon qiqi-avatar">
                 <img src="https://bonana521.github.io/-AI-/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
@@ -709,6 +761,7 @@
             <a href="ecosystem_v2.html">生态演化</a>
             <a href="snake.html">贪吃蛇游戏</a>
             <a href="https://bonana521.github.io/Tetris/" target="_blank">俄罗斯方块</a>
+            <a href="https://bonana521.github.io/bubble-shooter-game/" target="_blank">泡泡射击</a>
             <a href="https://bonana521.github.io/-AI-/" target="_blank">琪琪AI助手</a>
         </div>
         
@@ -802,7 +855,9 @@
             } else if (e.key === '5') {
                 window.open('https://bonana521.github.io/Tetris/', '_blank');
             } else if (e.key === '6') {
-                window.location.href = 'qiqi/index.html';
+                window.open('https://bonana521.github.io/bubble-shooter-game/', '_blank');
+            } else if (e.key === '7') {
+                window.open('https://bonana521.github.io/-AI-/', '_blank');
             }
         });
     </script>
