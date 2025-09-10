@@ -289,6 +289,26 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
 
+        .game-animation .game-icon {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .game-animation .feature-tag {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .game-animation .play-btn {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .game-animation .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
 
         .features {
             display: flex;
@@ -593,6 +613,11 @@
             color: white;
         }
 
+        .night-mode .game-animation .play-btn {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -625,6 +650,10 @@
 
         .game-card:nth-child(7) {
             animation-delay: 1.4s;
+        }
+
+        .game-card:nth-child(8) {
+            animation-delay: 1.6s;
         }
 
         @keyframes slideInUp {
@@ -736,6 +765,19 @@
             </div>
         </div>
 
+        <div class="game-card game-animation">
+            <div class="game-icon">🎨</div>
+            <h2>动画涂鸦工作室</h2>
+            <p>现代化的动画创作工具！支持多帧动画、洋葱皮功能、触摸绘画，让你轻松创作有趣的动画作品，发挥无限创意。</p>
+            <a href="https://bonana521.github.io/animation-game/" class="play-btn" target="_blank">开始创作</a>
+            <div class="features">
+                <span class="feature-tag">🎨 动画创作</span>
+                <span class="feature-tag">🧅 洋葱皮</span>
+                <span class="feature-tag">📱 触摸支持</span>
+                <span class="feature-tag">🎬 多帧动画</span>
+            </div>
+        </div>
+
         <div class="game-card game-qiqi">
             <div class="game-icon qiqi-avatar">
                 <img src="https://bonana521.github.io/-AI-/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
@@ -762,6 +804,7 @@
             <a href="snake.html">贪吃蛇游戏</a>
             <a href="https://bonana521.github.io/Tetris/" target="_blank">俄罗斯方块</a>
             <a href="https://bonana521.github.io/bubble-shooter-game/" target="_blank">泡泡射击</a>
+            <a href="https://bonana521.github.io/animation-game/" target="_blank">动画涂鸦</a>
             <a href="https://bonana521.github.io/-AI-/" target="_blank">琪琪AI助手</a>
         </div>
         
@@ -857,6 +900,8 @@
             } else if (e.key === '6') {
                 window.open('https://bonana521.github.io/bubble-shooter-game/', '_blank');
             } else if (e.key === '7') {
+                window.open('https://bonana521.github.io/animation-game/', '_blank');
+            } else if (e.key === '8') {
                 window.open('https://bonana521.github.io/-AI-/', '_blank');
             }
         });
