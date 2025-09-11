@@ -327,6 +327,24 @@
             box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6);
         }
 
+        .game-piano .game-icon {
+            background: linear-gradient(135deg, #8B4513, #DAA520, #000000);
+        }
+
+        .game-piano .feature-tag {
+            background: rgba(139, 69, 19, 0.1);
+            color: #8B4513;
+        }
+
+        .game-piano .play-btn {
+            background: linear-gradient(135deg, #8B4513, #DAA520);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
+        }
+
+        .game-piano .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.6);
+        }
+
 
         .features {
             display: flex;
@@ -641,6 +659,11 @@
             color: white;
         }
 
+        .night-mode .game-piano .play-btn {
+            background: linear-gradient(135deg, #DAA520, #8B4513);
+            color: white;
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -681,6 +704,10 @@
 
         .game-card:nth-child(9) {
             animation-delay: 1.8s;
+        }
+
+        .game-card:nth-child(10) {
+            animation-delay: 2.0s;
         }
 
         @keyframes slideInUp {
@@ -818,6 +845,19 @@
             </div>
         </div>
 
+        <div class="game-card game-piano">
+            <div class="game-icon">🎹</div>
+            <h2>智能钢琴演奏</h2>
+            <p>专业的钢琴演奏应用！拥有37键扩展键盘、优化钢琴音色和丰富的经典曲目库，支持键盘、鼠标和触屏操作。</p>
+            <a href="https://bonana521.github.io/pianogame/" class="play-btn" target="_blank">开始演奏</a>
+            <div class="features">
+                <span class="feature-tag">🎹 37键钢琴</span>
+                <span class="feature-tag">🎵 优化音色</span>
+                <span class="feature-tag">⌨️ 键盘映射</span>
+                <span class="feature-tag">📱 触屏支持</span>
+            </div>
+        </div>
+
         <div class="game-card game-qiqi">
             <div class="game-icon qiqi-avatar">
                 <img src="https://bonana521.github.io/-AI-/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
@@ -846,6 +886,7 @@
             <a href="https://bonana521.github.io/bubble-shooter-game/" target="_blank">泡泡射击</a>
             <a href="https://bonana521.github.io/animation-game/" target="_blank">动画涂鸦</a>
             <a href="https://bonana521.github.io/typinggame/" target="_blank">打字追逐</a>
+            <a href="https://bonana521.github.io/pianogame/" target="_blank">智能钢琴</a>
             <a href="https://bonana521.github.io/-AI-/" target="_blank">琪琪AI助手</a>
         </div>
         
@@ -946,6 +987,8 @@
                 window.open('https://bonana521.github.io/-AI-/', '_blank');
             } else if (e.key === '9') {
                 window.open('https://bonana521.github.io/typinggame/', '_blank');
+            } else if (e.key === '0') {
+                window.open('https://bonana521.github.io/pianogame/', '_blank');
             }
         });
     </script>
