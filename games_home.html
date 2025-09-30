@@ -664,6 +664,29 @@
             color: white;
         }
 
+        .night-mode .game-luna .play-btn {
+            background: linear-gradient(135deg, #4a5f7a, #2c3e50);
+            color: white;
+        }
+
+        .game-luna .game-icon {
+            background: linear-gradient(135deg, #4a5f7a, #2c3e50);
+        }
+
+        .game-luna .feature-tag {
+            background: rgba(74, 95, 122, 0.1);
+            color: #4a5f7a;
+        }
+
+        .game-luna .play-btn {
+            background: linear-gradient(135deg, #4a5f7a, #2c3e50);
+            box-shadow: 0 5px 15px rgba(74, 95, 122, 0.4);
+        }
+
+        .game-luna .play-btn:hover {
+            box-shadow: 0 8px 25px rgba(74, 95, 122, 0.6);
+        }
+
         /* 加载动画 */
         .game-card {
             animation: slideInUp 0.6s ease-out forwards;
@@ -858,6 +881,19 @@
             </div>
         </div>
 
+        <div class="game-card game-luna">
+            <div class="game-icon">🌙</div>
+            <h2>Luna时光机 🐱</h2>
+            <p>AI驱动的交互式历史探索器！跟随猫咪Luna穿越时空，探索人类历史文明，体验AI生成的生动历史内容和递归知识探索。</p>
+            <a href="https://ritori2022.github.io/Luna_TimeMachine/" class="play-btn" target="_blank">开始探索</a>
+            <div class="features">
+                <span class="feature-tag">🕐 时光穿越</span>
+                <span class="feature-tag">🤖 AI生成</span>
+                <span class="feature-tag">📚 历史探索</span>
+                <span class="feature-tag">🐱 猫咪陪伴</span>
+            </div>
+        </div>
+
         <div class="game-card game-qiqi">
             <div class="game-icon qiqi-avatar">
                 <img src="https://bonana521.github.io/-AI-/avatar.png" alt="琪琪" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
@@ -887,6 +923,7 @@
             <a href="https://bonana521.github.io/animation-game/" target="_blank">动画涂鸦</a>
             <a href="https://bonana521.github.io/typinggame/" target="_blank">打字追逐</a>
             <a href="https://bonana521.github.io/pianogame/" target="_blank">智能钢琴</a>
+            <a href="https://ritori2022.github.io/Luna_TimeMachine/" target="_blank">Luna时光机</a>
             <a href="https://bonana521.github.io/-AI-/" target="_blank">琪琪AI助手</a>
         </div>
         
@@ -989,6 +1026,8 @@
                 window.open('https://bonana521.github.io/typinggame/', '_blank');
             } else if (e.key === '0') {
                 window.open('https://bonana521.github.io/pianogame/', '_blank');
+            } else if (e.key === 'l' || e.key === 'L') {
+                window.open('https://ritori2022.github.io/Luna_TimeMachine/', '_blank');
             }
         });
     </script>
